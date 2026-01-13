@@ -2,9 +2,9 @@
 set -e
 
 # Claude Skills Installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/USER/claude-skills/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/Canto87/claude-skills/main/install.sh | bash
 
-REPO_URL="https://github.com/USER/claude-skills"
+REPO_URL="https://github.com/Canto87/claude-skills"
 BRANCH="main"
 SKILLS_DIR=".claude/skills"
 

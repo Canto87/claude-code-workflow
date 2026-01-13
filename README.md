@@ -15,7 +15,7 @@ Reusable feature planning and implementation skills for Claude Code.
 
 ```bash
 # Git Clone
-git clone https://github.com/USER/claude-skills.git /tmp/claude-skills
+git clone https://github.com/Canto87/claude-skills.git /tmp/claude-skills
 cp -r /tmp/claude-skills/skills/* .claude/skills/
 rm -rf /tmp/claude-skills
 
