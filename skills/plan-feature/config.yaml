@@ -1,0 +1,36 @@
+# plan-feature 스킬 설정
+# 프로젝트에 맞게 수정하세요
+
+project:
+  name: "my-project"
+  language: go              # go | typescript | python | java | rust | other
+
+paths:
+  source: "internal"        # 소스 코드 경로 (Go: internal, TS/Py: src)
+  apps: "apps"              # 애플리케이션 진입점
+  plans: "docs/plans"       # 설계 문서 출력 경로
+
+# Q&A의 "시스템 연동" 질문에서 선택지로 표시됩니다
+# 최대 3개까지 표시 (AskUserQuestion 제한)
+integrations:
+  - label: "Database"
+    description: "데이터베이스 레이어"
+    path: "internal/database"
+  - label: "API"
+    description: "HTTP API"
+    path: "internal/api"
+  - label: "Config"
+    description: "설정 관리"
+    path: "internal/config"
+
+# Q&A의 "저장소" 질문에서 선택지로 표시됩니다
+storage:
+  - label: "SQLite"
+    description: "경량 임베디드 DB"
+    recommended: true
+  - label: "PostgreSQL"
+    description: "프로덕션 DB"
+  - label: "In-memory"
+    description: "재시작 시 초기화"
+  - label: "File-based"
+    description: "JSON/YAML 파일"
