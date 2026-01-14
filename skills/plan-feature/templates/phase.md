@@ -98,7 +98,6 @@ class {TypeName}:
 ## Next Steps
 
 After completing this phase → Implement `0{N+1}_{NEXT}.md`
-```
 
 ---
 
