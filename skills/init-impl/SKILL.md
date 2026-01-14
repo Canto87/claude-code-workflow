@@ -62,8 +62,8 @@ ls {plans_path}/{feature_name}/
 ```
 {checklists_path}/{feature}.md            # Checklist
 {commands_path}/{feature}/                # Commands folder
-├── status.md                             # → /status (project:{feature})
-├── phase1.md                             # → /phase1 (project:{feature})
+├── {feature}-status.md                   # → /{feature}-status
+├── {feature}-phase1.md                   # → /{feature}-phase1
 └── ...
 ```
 
@@ -74,13 +74,14 @@ Templates:
 
 ## Naming Rules
 
-| Original Folder | Commands Folder | Checklist |
-|-----------------|-----------------|-----------|
-| `user_auth` | `user-auth/` | `user-auth.md` |
-| `payment_system` | `payment-system/` | `payment-system.md` |
+| Original Folder | Commands Folder | Command Files | Checklist |
+|-----------------|-----------------|---------------|-----------|
+| `user_auth` | `user-auth/` | `user-auth-status.md`, `user-auth-phase1.md` | `user-auth.md` |
+| `payment_system` | `payment-system/` | `payment-system-status.md`, `payment-system-phase1.md` | `payment-system.md` |
 
 Rules:
 - Folder name: underscore (`_`) → hyphen (`-`)
+- Command files: `{feature}-status.md`, `{feature}-phase1.md`, ...
 - Checklist: use converted name as-is
 
 ## CLAUDE.md Update (Optional)
@@ -88,9 +89,9 @@ Rules:
 If project has CLAUDE.md, add to slash commands section:
 
 ```markdown
-### {Feature Name} (project:{feature})
-- `/status` - Check progress
-- `/phase1` ~ `/phaseN` - Implement each Phase
+### {Feature Name}
+- `/{feature}-status` - Check progress
+- `/{feature}-phase1` ~ `/{feature}-phaseN` - Implement each Phase
 
 > Checklist: `{checklists_path}/{feature}.md`
 > Design docs: `{plans_path}/{feature}/`
@@ -104,15 +105,15 @@ If project has CLAUDE.md, add to slash commands section:
 ### Generated Files
 - `{checklists_path}/{feature}.md` - Checklist
 - `{commands_path}/{feature}/` - Commands folder
-  - `status.md` → /status (project:{feature})
-  - `phase1.md` ~ `phaseN.md` → /phase1~N (project:{feature})
+  - `{feature}-status.md` → /{feature}-status
+  - `{feature}-phase1.md` ~ `{feature}-phaseN.md` → /{feature}-phase1~N
 
 ### Usage
-- `/status` (project:{feature}) - Check current progress
-- `/phase1` (project:{feature}) - Start Phase 1 implementation
+- `/{feature}-status` - Check current progress
+- `/{feature}-phase1` - Start Phase 1 implementation
 
 ### Next Steps
-Start Phase 1 implementation with `/phase1`!
+Start Phase 1 implementation with `/{feature}-phase1`!
 ```
 
 ---
