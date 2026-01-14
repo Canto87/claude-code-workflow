@@ -1,6 +1,7 @@
 ---
 name: plan-feature
 description: Generate phase-based design documents for new features. Use for feature planning, roadmap creation, design documents, or "design a feature" requests.
+allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, Task
 ---
 
 # Phase Document Generator

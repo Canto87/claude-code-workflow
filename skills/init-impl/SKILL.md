@@ -1,6 +1,7 @@
 ---
 name: init-impl
 description: Analyze design documents to auto-generate checklists and slash commands. Also supports cleanup mode to remove generated files after implementation is complete.
+allowed-tools: Read, Write, Glob, Bash, AskUserQuestion
 ---
 
 # Implementation System Generator

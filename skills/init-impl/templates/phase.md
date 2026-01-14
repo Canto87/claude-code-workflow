@@ -5,6 +5,11 @@ Template for `{commands_path}/{feature}/phase{N}.md` file.
 ---
 
 ```markdown
+---
+description: Phase {N} - {Phase Name} implementation
+allowed-tools: Read, Edit, Write, Bash, Glob, Grep, Skill
+---
+
 Build {Feature Name} Phase {N}: {Phase Name}
 
 ## Overview

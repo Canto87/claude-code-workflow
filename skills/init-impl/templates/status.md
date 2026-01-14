@@ -5,6 +5,11 @@ Template for `{commands_path}/{feature}/status.md` file.
 ---
 
 ```markdown
+---
+description: Check {Feature Name} progress
+allowed-tools: Read, Glob
+---
+
 Check {Feature Name} progress
 
 ## Tasks
