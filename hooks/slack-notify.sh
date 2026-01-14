@@ -24,9 +24,10 @@ if [[ -z "$transcript_path" || ! -f "$transcript_path" ]]; then
     exit 0
 fi
 
-# Find command-name tags in user messages only (not in tool results/diffs)
-# Use jq to filter user messages, then extract last command-name
-skill_name=$(jq -r 'select(.type == "user") | .message.content | if type == "string" then . else empty end' "$transcript_path" 2>/dev/null | grep -oE '<command-name>/[a-zA-Z0-9_:-]+</command-name>' | tail -1 | sed 's|<command-name>/||;s|</command-name>||' || true)
+# Find command-name tags in the LAST string-type user message only
+# This prevents duplicate notifications when chatting after a skill completes
+last_string_content=$(jq -s '[.[] | select(.type == "user") | select(.message.content | type == "string")] | last | .message.content' "$transcript_path" 2>/dev/null || true)
+skill_name=$(echo "$last_string_content" | grep -oE '<command-name>/[a-zA-Z0-9_:-]+</command-name>' | tail -1 | sed 's|<command-name>/||;s|</command-name>||' || true)
 
 echo "[$(date)] Extracted skill_name: $skill_name" >> "$DEBUG_LOG"
 
