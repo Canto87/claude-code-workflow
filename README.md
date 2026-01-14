@@ -8,6 +8,7 @@ Reusable feature planning and implementation skills for Claude Code.
 |-------|-------------|-----------------|
 | **plan-feature** | Q&A-based phase-by-phase design document generation | "Design an auth feature" |
 | **init-impl** | Generate checklists and commands from design docs | "Prepare to implement auth" |
+| **slack-notify** | Send Slack notifications on skill completion | Auto-triggered via hooks |
 
 ## Quick Start
 
@@ -114,10 +115,17 @@ Each skill is completely independent:
 │   ├── questions.md       # Q&A template
 │   └── templates/
 │
-└── init-impl/
+├── init-impl/
+│   ├── SKILL.md           # Skill definition
+│   ├── config.yaml        # Skill-specific config
+│   └── templates/
+│
+└── slack-notify/
     ├── SKILL.md           # Skill definition
-    ├── config.yaml        # Skill-specific config
-    └── templates/
+    └── config.yaml        # Webhook URL, channel settings
+
+.claude/hooks/
+└── slack-notify.sh        # PostToolUse hook script
 ```
 
 - One folder = one complete skill
@@ -146,7 +154,37 @@ Each skill is completely independent:
 | `build.command` | Build command | - |
 | `build.test` | Test command | - |
 
+### slack-notify
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `webhook_url` | Slack Incoming Webhook URL | - (required) |
+| `channel` | Target Slack channel | `#claude-notifications` |
+| `target_skills` | Skills to monitor | `plan-feature`, `init-impl`, `*:phase*` |
+
+**Hooks Setup Required:**
+
+Add to `.claude/settings.local.json`:
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/slack-notify.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
 For detailed configuration: [docs/CONFIGURATION.md](docs/CONFIGURATION.md)
+For hooks setup: [docs/HOOKS.md](docs/HOOKS.md)
 
 ## Contributing
 

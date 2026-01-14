@@ -90,6 +90,15 @@ mkdir -p "$SKILLS_DIR"
 print_info "Copying skills..."
 cp -r "$TEMP_DIR/skills/"* "$SKILLS_DIR/"
 
+# Copy hooks (if exists)
+if [ -d "$TEMP_DIR/hooks" ]; then
+    HOOKS_DIR="${SKILLS_DIR}/../hooks"
+    print_info "Copying hooks to $HOOKS_DIR..."
+    mkdir -p "$HOOKS_DIR"
+    cp -r "$TEMP_DIR/hooks/"* "$HOOKS_DIR/"
+    chmod +x "$HOOKS_DIR/"*.sh 2>/dev/null || true
+fi
+
 # Summary
 echo ""
 print_info "Installation complete!"
@@ -97,6 +106,10 @@ echo ""
 echo "Installed skills:"
 echo "  - plan-feature: Design phase-based documents"
 echo "  - init-impl: Generate checklists and commands"
+echo "  - slack-notify: Send Slack notifications on skill completion"
+echo ""
+echo "Installed hooks:"
+echo "  - slack-notify.sh: PostToolUse hook for Slack notifications"
 echo ""
 echo "Each skill has its own config.yaml file."
 echo ""
@@ -104,5 +117,10 @@ echo "Next steps:"
 echo "  1. Edit each skill's config.yaml for your project:"
 echo "     - $SKILLS_DIR/plan-feature/config.yaml"
 echo "     - $SKILLS_DIR/init-impl/config.yaml"
-echo "  2. Ask Claude: \"Design a new feature: [feature-name]\""
+echo "     - $SKILLS_DIR/slack-notify/config.yaml (set webhook_url)"
+echo ""
+echo "  2. For Slack notifications, add to your .claude/settings.local.json:"
+echo '     {"hooks": {"PostToolUse": [{"matcher": "Skill", "hooks": [{"type": "command", "command": ".claude/hooks/slack-notify.sh"}]}]}}'
+echo ""
+echo "  3. Ask Claude: \"Design a new feature: [feature-name]\""
 echo ""
