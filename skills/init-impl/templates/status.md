@@ -34,14 +34,13 @@ Check {Feature Name} progress
 
 ### Related Commands
 - `/phase{N}` (project:{feature}) - Start Phase N implementation
-```
 
 ## Session Notes Check
 
 Also check "Session Notes" section of each Phase for last progress updates
 
 ## Reference
-
+```
 - Checklist: `{checklists_path}/{feature}.md`
 - Phase documents: `{plans_path}/{feature}/`
 ```
