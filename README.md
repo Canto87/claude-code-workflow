@@ -168,9 +168,8 @@ Add to `.claude/settings.local.json`:
 ```json
 {
   "hooks": {
-    "PostToolUse": [
+    "Stop": [
       {
-        "matcher": "Skill",
         "hooks": [
           {
             "type": "command",

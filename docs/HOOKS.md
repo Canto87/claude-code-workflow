@@ -6,7 +6,7 @@ Claude Code hooks allow automatic triggering of scripts when specific events occ
 
 | Hook | Script | Description |
 |------|--------|-------------|
-| `slack-notify.sh` | PostToolUse | Sends Slack notifications when skills complete |
+| `slack-notify.sh` | Stop | Sends Slack notifications when session ends (after skills complete) |
 
 ## Setup
 
@@ -38,9 +38,8 @@ Add to your project's `.claude/settings.local.json`:
 ```json
 {
   "hooks": {
-    "PostToolUse": [
+    "Stop": [
       {
-        "matcher": "Skill",
         "hooks": [
           {
             "type": "command",
@@ -54,6 +53,8 @@ Add to your project's `.claude/settings.local.json`:
 ```
 
 Or for user-level (all projects), add to `~/.claude/settings.json`.
+
+**Note:** Stop hook triggers when the session ends, so notifications are sent after all skills complete.
 
 ## Monitored Skills
 
@@ -127,16 +128,18 @@ To create your own hook:
 2. Make executable: `chmod +x .claude/hooks/your-script.sh`
 3. Register in `settings.local.json`
 
-Hook scripts receive JSON input via stdin with:
-- `tool_name`: The tool that was used
-- `tool_input`: Input parameters
-- `tool_output`: Output from the tool
+**Stop hook** scripts receive JSON input via stdin with:
+- `transcript_path`: Path to session transcript file
 - `cwd`: Current working directory
 
 Example:
 ```bash
 #!/bin/bash
 input=$(cat)
-tool_name=$(echo "$input" | jq -r '.tool_name')
-# Your logic here
+transcript_path=$(echo "$input" | jq -r '.transcript_path')
+# Parse transcript to find executed skills
 ```
+
+## Debug Logging
+
+The slack-notify.sh script logs to `/tmp/slack-notify-debug.log` for troubleshooting.

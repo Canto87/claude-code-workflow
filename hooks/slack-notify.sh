@@ -1,14 +1,34 @@
 #!/bin/bash
 # slack-notify.sh - Send Slack notification on skill completion
-# Triggered by PostToolUse hook when Skill tool is used
+# Triggered by Stop hook when session ends
 
-set -euo pipefail
+# Silent failure - don't disrupt Claude Code workflow
+trap 'exit 0' ERR
+
+set -uo pipefail
+
+# Debug logging (temporary)
+DEBUG_LOG="/tmp/slack-notify-debug.log"
+echo "[$(date)] Hook triggered" >> "$DEBUG_LOG"
 
 # Read hook input from stdin
 input=$(cat)
+echo "[$(date)] Input: $input" >> "$DEBUG_LOG"
 
-# Extract skill name from tool_input
-skill_name=$(echo "$input" | jq -r '.tool_input.skill // empty')
+# Extract transcript path from Stop hook input
+transcript_path=$(echo "$input" | jq -r '.transcript_path // empty')
+
+# Exit if no transcript path
+if [[ -z "$transcript_path" || ! -f "$transcript_path" ]]; then
+    echo "[$(date)] No transcript path or file not found" >> "$DEBUG_LOG"
+    exit 0
+fi
+
+# Find command-name tags in user messages only (not in tool results/diffs)
+# Use jq to filter user messages, then extract last command-name
+skill_name=$(jq -r 'select(.type == "user") | .message.content | if type == "string" then . else empty end' "$transcript_path" 2>/dev/null | grep -oE '<command-name>/[a-zA-Z0-9_:-]+</command-name>' | tail -1 | sed 's|<command-name>/||;s|</command-name>||' || true)
+
+echo "[$(date)] Extracted skill_name: $skill_name" >> "$DEBUG_LOG"
 
 # Exit silently if no skill name
 if [[ -z "$skill_name" ]]; then

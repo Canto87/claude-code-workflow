@@ -120,7 +120,7 @@ echo "     - $SKILLS_DIR/init-impl/config.yaml"
 echo "     - $SKILLS_DIR/slack-notify/config.yaml (set webhook_url)"
 echo ""
 echo "  2. For Slack notifications, add to your .claude/settings.local.json:"
-echo '     {"hooks": {"PostToolUse": [{"matcher": "Skill", "hooks": [{"type": "command", "command": ".claude/hooks/slack-notify.sh"}]}]}}'
+echo '     {"hooks": {"Stop": [{"hooks": [{"type": "command", "command": ".claude/hooks/slack-notify.sh"}]}]}}'
 echo ""
 echo "  3. Ask Claude: \"Design a new feature: [feature-name]\""
 echo ""
