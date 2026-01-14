@@ -1,6 +1,6 @@
 ---
 name: slack-notify
-description: Slack 채널로 스킬 완료 알림 전송. PostToolUse hooks로 자동 트리거됨.
+description: Send Slack notifications on skill completion. Auto-triggered via PostToolUse hooks.
 allowed-tools:
   - Bash
   - Read
@@ -8,43 +8,43 @@ allowed-tools:
 
 # Slack Notification Skill
 
-Claude Code 스킬(plan-feature, init-impl, phase 명령어) 완료 시 Slack 채널로 알림을 보내는 시스템입니다.
+Sends Slack channel notifications when Claude Code skills (plan-feature, init-impl, phase commands) complete.
 
 ## When to Use
 
-이 스킬은 주로 PostToolUse hooks에 의해 **자동으로 트리거**됩니다:
+This skill is primarily **auto-triggered** by PostToolUse hooks:
 
-- `plan-feature` 스킬 완료 시
-- `init-impl` 스킬 완료 시
-- `/phase{N}` 명령어 완료 시
+- When `plan-feature` skill completes
+- When `init-impl` skill completes
+- When `/phase{N}` commands complete
 
-수동으로 테스트하거나 설정을 확인할 때도 사용할 수 있습니다.
+Can also be used manually for testing or verifying setup.
 
 ## Prerequisites
 
-1. **Slack Incoming Webhook 생성**
-   - https://api.slack.com/messaging/webhooks 에서 생성
-   - 대상 채널 선택
+1. **Create Slack Incoming Webhook**
+   - Create at https://api.slack.com/messaging/webhooks
+   - Select target channel
 
-2. **config.yaml 설정**
-   - `webhook_url`: 실제 Webhook URL로 교체
-   - `channel`: 대상 채널명
+2. **Configure config.yaml**
+   - `webhook_url`: Replace with actual Webhook URL
+   - `channel`: Target channel name
 
-3. **Hooks 등록**
-   - `.claude/settings.local.json`에 PostToolUse hook 설정
+3. **Register Hooks**
+   - Add PostToolUse hook to `.claude/settings.local.json`
 
 ## Configuration
 
-`config.yaml` 파일에서 설정:
+Settings in `config.yaml`:
 
 ```yaml
-# Webhook URL (필수)
+# Webhook URL (required)
 webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
-# 대상 채널
+# Target channel
 channel: "#claude-notifications"
 
-# 모니터링할 스킬
+# Skills to monitor
 target_skills:
   - "plan-feature"
   - "init-impl"
@@ -53,15 +53,15 @@ target_skills:
 
 ## Monitored Skills
 
-| 스킬 | 트리거 조건 | 알림 내용 |
-|------|------------|----------|
-| `plan-feature` | 설계 문서 생성 완료 | 생성된 파일 목록, 다음 단계 안내 |
-| `init-impl` | 구현 시스템 생성 완료 | 체크리스트, 명령어 목록, 다음 단계 안내 |
-| `/phase{N}` | Phase 구현 완료 | 완료된 Phase 번호, 다음 Phase 안내 |
+| Skill | Trigger Condition | Notification Content |
+|-------|-------------------|---------------------|
+| `plan-feature` | Design document generation complete | Generated files list, next step guidance |
+| `init-impl` | Implementation system generation complete | Checklist, command list, next step guidance |
+| `/phase{N}` | Phase implementation complete | Completed phase number, next phase guidance |
 
 ## Message Format
 
-### plan-feature 완료
+### plan-feature Completion
 
 ```
 :clipboard: Feature Design Complete
@@ -75,7 +75,7 @@ Generated Files:
 Next Step: Run `init-impl` skill
 ```
 
-### init-impl 완료
+### init-impl Completion
 
 ```
 :hammer_and_wrench: Implementation System Ready
@@ -89,7 +89,7 @@ Generated Files:
 Next Step: Start with `/phase1` command
 ```
 
-### Phase 완료
+### Phase Completion
 
 ```
 :white_check_mark: Phase {N} Complete
@@ -103,25 +103,25 @@ Next Step: Continue with `/phase{N+1}`
 
 ## Setup Verification
 
-설정이 올바른지 확인하려면:
+To verify setup is correct:
 
-1. `config.yaml`의 `webhook_url`이 실제 URL인지 확인
-2. `.claude/settings.local.json`에 hooks가 등록되어 있는지 확인
-3. `plan-feature` 또는 `init-impl` 스킬을 실행하여 알림 수신 확인
+1. Check that `webhook_url` in `config.yaml` is a real URL
+2. Verify hooks are registered in `.claude/settings.local.json`
+3. Run `plan-feature` or `init-impl` skill to confirm notification receipt
 
 ## Troubleshooting
 
-| 문제 | 해결 방법 |
-|------|----------|
-| 알림이 오지 않음 | webhook_url이 올바른지 확인 |
-| 채널이 틀림 | config.yaml의 channel과 webhook 설정 일치 확인 |
-| 특정 스킬만 알림 안 옴 | target_skills에 해당 스킬이 포함되어 있는지 확인 |
-| 스크립트 오류 | `bash -x .claude/hooks/slack-notify.sh` 로 디버깅 |
+| Issue | Solution |
+|-------|----------|
+| No notifications | Verify webhook_url is correct |
+| Wrong channel | Ensure config.yaml channel matches webhook setup |
+| Specific skill not notifying | Check if skill is included in target_skills |
+| Script error | Debug with `bash -x .claude/hooks/slack-notify.sh` |
 
 ## Dependencies
 
-- `jq`: JSON 파싱 (macOS 기본 포함)
-- `curl`: HTTP 요청 (기본 포함)
+- `jq`: JSON parsing (included by default on macOS)
+- `curl`: HTTP requests (included by default)
 
 ## Architecture
 
@@ -131,11 +131,11 @@ PostToolUse Hook (matcher: "Skill")
     v
 slack-notify.sh
     |
-    +-- skill name 확인 (plan-feature, init-impl, *:phase*)
+    +-- Check skill name (plan-feature, init-impl, *:phase*)
     |
-    +-- config.yaml 읽기 (webhook_url, channel)
+    +-- Read config.yaml (webhook_url, channel)
     |
-    +-- 메시지 포맷팅
+    +-- Format message
     |
     v
 Slack Webhook API
@@ -143,6 +143,6 @@ Slack Webhook API
 
 ## Related Skills
 
-- `plan-feature`: 기능 설계 문서 생성
-- `init-impl`: 구현 시스템 생성
-- `implement-layer`: Clean Architecture 계층 구현
+- `plan-feature`: Generate feature design documents
+- `init-impl`: Generate implementation system
+- `implement-layer`: Implement Clean Architecture layers
