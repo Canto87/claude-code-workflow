@@ -22,7 +22,17 @@ rm -rf /tmp/claude-skills
 # Edit each skill's config.yaml for your project
 ```
 
-### Configuration
+### Auto-Configuration (Recommended)
+
+After installation, ask Claude:
+
+```
+"Configure claude-skills for this project"
+```
+
+Claude will analyze your project structure and update config.yaml files automatically.
+
+### Manual Configuration
 
 Edit `config.yaml` in each skill folder for your project:
 

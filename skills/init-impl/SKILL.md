@@ -1,6 +1,6 @@
 ---
 name: init-impl
-description: Analyze design documents to auto-generate checklists and slash commands. Use for implementation system initialization, preparation, or "prepare to implement" requests.
+description: Analyze design documents to auto-generate checklists and slash commands. Also supports cleanup mode to remove generated files after implementation is complete.
 ---
 
 # Implementation System Generator
@@ -9,10 +9,17 @@ Analyzes design documents (`{plans_path}/{feature}/`) to automatically generate 
 
 ## When to Use
 
+**Generate mode (default):**
 - "Prepare to implement XX"
 - "Create implementation system from docs/plans/YY"
 - "Let's start implementing ZZ"
 - When setup is needed after design documents are ready
+
+**Cleanup mode:**
+- "Clean up user-auth implementation"
+- "Remove implementation commands for payment"
+- "Implementation done, cleanup user-auth"
+- After implementation is complete and commands are no longer needed
 
 ## Configuration File
 
@@ -89,7 +96,7 @@ If project has CLAUDE.md, add to slash commands section:
 > Design docs: `{plans_path}/{feature}/`
 ```
 
-## Completion Output
+## Completion Output (Generate)
 
 ```
 ## Implementation System Generated
@@ -106,4 +113,34 @@ If project has CLAUDE.md, add to slash commands section:
 
 ### Next Steps
 Start Phase 1 implementation with `/phase1`!
+```
+
+---
+
+## Cleanup Execution Flow
+
+```
+1. Identify Target     → Parse feature name from request
+       ↓
+2. Verify Files Exist  → Check commands folder and checklist exist
+       ↓
+3. Confirm with User   → List files to be deleted, ask confirmation
+       ↓
+4. Delete Files        → Remove commands folder and checklist
+       ↓
+5. (Optional) Update CLAUDE.md → Remove slash command references
+```
+
+## Completion Output (Cleanup)
+
+```
+## Implementation Cleanup Complete
+
+### Deleted Files
+- `{commands_path}/{feature}/` - Commands folder removed
+- `{checklists_path}/{feature}.md` - Checklist removed
+
+### Notes
+- Design documents in `{plans_path}/{feature}/` preserved
+- Re-run init-impl if you need to regenerate commands
 ```

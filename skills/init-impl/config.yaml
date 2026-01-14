@@ -1,18 +1,18 @@
-# init-impl 스킬 설정
-# 프로젝트에 맞게 수정하세요
+# init-impl skill configuration
+# Customize for your project
 
 paths:
-  plans: "docs/plans"              # 설계 문서 입력 경로
-  checklists: "docs/checklists"    # 체크리스트 출력 경로
-  commands: ".claude/commands"     # 슬래시 명령어 출력 경로
+  plans: "docs/plans"              # Design document input path
+  checklists: "docs/checklists"    # Checklist output path
+  commands: ".claude/commands"     # Slash command output path
 
-# 빌드/테스트 명령어 (Phase 명령어 템플릿에 사용)
+# Build/test commands (used in Phase command templates)
 build:
-  command: "go build ./..."        # 빌드 명령어
-  test: "go test ./..."            # 테스트 명령어
-  run: "./bin/{app}"               # 실행 명령어 ({app}은 기능명으로 대체)
+  command: "go build ./..."        # Build command
+  test: "go test ./..."            # Test command
+  run: "./bin/{app}"               # Run command ({app} is replaced with feature name)
 
-# 언어별 기본값 참고
+# Language-specific defaults
 # Go:         go build ./... / go test ./... / ./bin/{app}
 # TypeScript: npm run build / npm test / npm run start:{app}
 # Python:     python -m build / pytest / python -m {app}
