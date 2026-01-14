@@ -47,7 +47,9 @@ paths:
        ↓
 5. Details (Optional)     → Priority, Scheduling
        ↓
-6. Generate Documents     → Write phase-based docs
+6. Preview & Confirm      → Show each file preview, allow edits
+       ↓
+7. Generate Documents     → Write confirmed docs
 ```
 
 **Key Rules:**
@@ -83,6 +85,27 @@ Templates:
 - [templates/overview.md](templates/overview.md) - OVERVIEW template
 - [templates/phase.md](templates/phase.md) - Phase template
 
+## Preview & Confirm Flow
+
+For each document (OVERVIEW, Phase1, Phase2, ...):
+
+```
+1. Generate Preview    → Create document content in memory
+       ↓
+2. Show Preview        → Display content to user
+       ↓
+3. User Decision       → Approve / Request changes / Skip
+       ↓
+4. Apply Changes       → If changes requested, regenerate
+       ↓
+5. Write File          → Save confirmed content
+```
+
+**User options at each preview:**
+- **Approve** - Save file as-is, proceed to next
+- **Request changes** - Describe what to modify, regenerate preview
+- **Skip** - Don't create this file, proceed to next
+
 ## Phase Division Criteria
 
 1. **Dependencies**: Does another Phase need to complete first?
@@ -103,9 +126,10 @@ Recommended Phase count: 3-7
 ## Design Documents Generated
 
 📁 {plans_path}/{feature_name}/
-├── 00_OVERVIEW.md     - Overall overview
-├── 01_{name}.md       - Phase 1: {description}
-└── ...
+├── 00_OVERVIEW.md     ✓ (confirmed)
+├── 01_{name}.md       ✓ (confirmed)
+├── 02_{name}.md       ✓ (modified)
+└── 03_{name}.md       ⊘ (skipped)
 
 ### Collected Information Summary
 - Feature name: {feature_name}
@@ -117,6 +141,11 @@ Recommended Phase count: 3-7
 ### Next Steps
 "{feature_name} prepare for implementation" → init-impl Skill
 ```
+
+**Status indicators:**
+- ✓ (confirmed) - Approved without changes
+- ✓ (modified) - Approved after user modifications
+- ⊘ (skipped) - User chose to skip this file
 
 ## Next Steps
 
