@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-# Claude Skills Installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/Canto87/claude-skills/main/install.sh | bash
+# Claude Code Workflow Installer
+# Usage: curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash
 
-REPO_URL="https://github.com/Canto87/claude-skills"
+REPO_URL="https://github.com/Canto87/claude-code-workflow"
 BRANCH="main"
 SKILLS_DIR=".claude/skills"
 
@@ -28,7 +28,7 @@ print_error() {
 
 show_help() {
     cat << EOF
-Claude Skills Installer
+Claude Code Workflow Installer
 
 Usage: ./install.sh [OPTIONS]
 
@@ -73,7 +73,7 @@ fi
 TEMP_DIR=$(mktemp -d)
 trap "rm -rf $TEMP_DIR" EXIT
 
-print_info "Installing Claude Skills..."
+print_info "Installing Claude Code Workflow..."
 print_info "Output: $SKILLS_DIR"
 
 # Clone repository

@@ -1,4 +1,4 @@
-# Claude Skills: Plan & Implement
+# Claude Code Workflow
 
 Reusable feature planning and implementation skills for Claude Code.
 
@@ -16,9 +16,9 @@ Reusable feature planning and implementation skills for Claude Code.
 
 ```bash
 # Git Clone
-git clone https://github.com/Canto87/claude-skills.git /tmp/claude-skills
-cp -r /tmp/claude-skills/skills/* .claude/skills/
-rm -rf /tmp/claude-skills
+git clone https://github.com/Canto87/claude-code-workflow.git /tmp/claude-code-workflow
+cp -r /tmp/claude-code-workflow/skills/* .claude/skills/
+rm -rf /tmp/claude-code-workflow
 
 # Edit each skill's config.yaml for your project
 ```
@@ -28,7 +28,7 @@ rm -rf /tmp/claude-skills
 After installation, ask Claude:
 
 ```
-"Configure claude-skills for this project"
+"Configure claude-code-workflow for this project"
 ```
 
 Claude will analyze your project structure and update config.yaml files automatically.
