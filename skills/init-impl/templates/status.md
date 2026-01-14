@@ -33,7 +33,7 @@ Check {Feature Name} progress
 {Specific next task to work on}
 
 ### Related Commands
-- `/phase{N}` (project:{feature}) - Start Phase N implementation
+- `/{feature}-phase{N}` - Start Phase N implementation
 
 ## Session Notes Check
 

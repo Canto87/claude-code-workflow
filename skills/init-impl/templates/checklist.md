@@ -59,8 +59,8 @@ Each Phase completion requirements:
 
 | Command | Description |
 |---------|-------------|
-| `/status` (project:{feature}) | Check current progress |
-| `/phase1` ~ `/phaseN` (project:{feature}) | Implement each Phase |
+| `/{feature}-status` | Check current progress |
+| `/{feature}-phase1` ~ `/{feature}-phaseN` | Implement each Phase |
 ```
 
 ---
