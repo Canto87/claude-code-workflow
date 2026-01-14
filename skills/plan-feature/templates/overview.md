@@ -105,7 +105,6 @@ class {TypeName}:
 {apps_path}/{feature}/
 └── main.{ext}
 ```
-```
 
 ---
 
