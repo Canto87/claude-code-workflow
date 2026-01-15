@@ -9,6 +9,7 @@ Reusable feature planning and implementation skills for Claude Code.
 | **plan-feature** | Q&A-based phase-by-phase design document generation | "Design an auth feature" |
 | **init-impl** | Generate checklists and commands from design docs | "Prepare to implement auth" |
 | **slack-notify** | Send Slack notifications on skill completion | Auto-triggered via hooks |
+| **worktree** | Git worktree management for parallel branch development | `/worktree-add feature/auth` |
 
 ## Quick Start
 
@@ -120,9 +121,14 @@ Each skill is completely independent:
 │   ├── config.yaml        # Skill-specific config
 │   └── templates/
 │
-└── slack-notify/
+├── slack-notify/
+│   ├── SKILL.md           # Skill definition
+│   └── config.yaml        # Webhook URL, channel settings
+│
+└── worktree/
     ├── SKILL.md           # Skill definition
-    └── config.yaml        # Webhook URL, channel settings
+    ├── config.yaml        # Worktree settings
+    └── README.md          # Quick reference
 
 .claude/hooks/
 └── slack-notify.sh        # PostToolUse hook script
@@ -161,6 +167,27 @@ Each skill is completely independent:
 | `webhook_url` | Slack Incoming Webhook URL | - (required) |
 | `channel` | Target Slack channel | `#claude-notifications` |
 | `target_skills` | Skills to monitor | `plan-feature`, `init-impl`, `*:phase*` |
+
+### worktree
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `worktree.base_dir` | Base directory for new worktrees | `..` |
+| `worktree.naming_pattern` | Directory naming pattern | `{branch}` |
+| `branch.default_base` | Default base branch for new branches | `main` |
+| `safety.confirm_remove` | Require confirmation before removing | `true` |
+| `safety.check_uncommitted` | Check for uncommitted changes | `true` |
+
+**Subcommands:**
+
+| Command | Description |
+|---------|-------------|
+| `/worktree-list` | List all worktrees with status |
+| `/worktree-add [branch]` | Create worktree for branch |
+| `/worktree-add -b [new]` | Create new branch and worktree |
+| `/worktree-remove [path]` | Remove worktree safely |
+| `/worktree-info` | Show current worktree info |
+| `/worktree-switch [path]` | Switch to another worktree |
 
 **Hooks Setup Required:**
 

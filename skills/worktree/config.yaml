@@ -1,0 +1,90 @@
+# Git Worktree Skill Configuration
+# Edit this file to customize for your project
+
+# =============================================================================
+# WORKTREE SETTINGS
+# =============================================================================
+
+worktree:
+  # Base directory for new worktrees (relative to git root)
+  # Common patterns:
+  #   ".."           - Parent directory (recommended for this project)
+  #   "../worktrees" - Dedicated worktrees folder
+  base_dir: ".."
+
+  # Directory naming pattern for new worktrees
+  # Placeholders:
+  #   {branch}      - Full branch name with / replaced by -
+  #   {branch_last} - Last segment of branch name only
+  #   {date}        - Current date (YYYYMMDD)
+  #
+  # Examples for branch "feature/auth":
+  #   "{branch}"      -> "feature-auth"
+  #   "{branch_last}" -> "auth"
+  naming_pattern: "{branch}"
+
+  # Character replacements for directory names
+  sanitize:
+    "/": "-"
+    "\\": "-"
+    ":": "-"
+    "*": "-"
+    "?": "-"
+    "\"": "-"
+    "<": "-"
+    ">": "-"
+    "|": "-"
+    " ": "-"
+
+# =============================================================================
+# BRANCH SETTINGS
+# =============================================================================
+
+branch:
+  # Default base branch when creating new branches
+  default_base: "main"
+
+  # Fetch remote branches before listing?
+  auto_fetch: true
+
+  # Show remote branches in selection?
+  show_remote: true
+
+  # Maximum branches to display in selection list
+  max_display: 20
+
+# =============================================================================
+# SAFETY SETTINGS
+# =============================================================================
+
+safety:
+  # Require confirmation before removing worktree?
+  confirm_remove: true
+
+  # Check for uncommitted changes before removing?
+  check_uncommitted: true
+
+  # Automatically stash changes when removing? (if false, asks user)
+  auto_stash: false
+
+  # Prevent removing the main/primary worktree?
+  protect_main: true
+
+  # Protected worktree paths (cannot be removed via this skill)
+  # Use absolute paths or patterns
+  protected_paths: []
+
+# =============================================================================
+# DISPLAY SETTINGS
+# =============================================================================
+
+display:
+  # Show uncommitted change count in list?
+  show_changes: true
+
+  # Show last commit info in list?
+  show_last_commit: false
+
+  # Language for messages
+  # Options: "en", "ko", "ja"
+  language: "en"
