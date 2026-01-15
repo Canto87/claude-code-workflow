@@ -14,13 +14,22 @@ How to customize skill templates for your project.
 │       ├── overview.md
 │       └── phase.md
 │
-└── init-impl/
+├── init-impl/
+│   ├── SKILL.md          # Skill definition
+│   ├── config.yaml       # Skill config (edit here)
+│   └── templates/
+│       ├── checklist.md
+│       ├── status.md
+│       └── phase.md
+│
+├── slack-notify/
+│   ├── SKILL.md          # Skill definition
+│   └── config.yaml       # Webhook URL, channel settings
+│
+└── worktree/
     ├── SKILL.md          # Skill definition
-    ├── config.yaml       # Skill config (edit here)
-    └── templates/
-        ├── checklist.md
-        ├── status.md
-        └── phase.md
+    ├── config.yaml       # Worktree settings
+    └── README.md         # Quick reference
 ```
 
 ## Customization Points

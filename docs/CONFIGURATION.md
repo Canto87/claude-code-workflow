@@ -170,3 +170,91 @@ paths:
   checklists: "docs/checklists"
   commands: ".claude/commands"
 ```
+
+---
+
+## worktree Configuration
+
+### Full Structure
+
+```yaml
+# worktree/config.yaml
+worktree:
+  base_dir: ".."
+  naming_pattern: "{branch}"
+  sanitize:
+    "/": "-"
+    " ": "-"
+
+branch:
+  default_base: "main"
+  auto_fetch: true
+  show_remote: true
+  max_display: 20
+
+safety:
+  confirm_remove: true
+  check_uncommitted: true
+  auto_stash: false
+  protect_main: true
+  protected_paths: []
+
+display:
+  show_changes: true
+  show_last_commit: false
+  language: "en"
+```
+
+### Section Details
+
+#### worktree
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `base_dir` | `..` | Base directory for new worktrees |
+| `naming_pattern` | `{branch}` | Directory naming pattern (`{branch}`, `{branch_last}`, `{date}`) |
+| `sanitize` | `/: "-"` | Character replacements for directory names |
+
+#### branch
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `default_base` | `main` | Default base branch for new branches |
+| `auto_fetch` | `true` | Fetch remote branches before listing |
+| `show_remote` | `true` | Show remote branches in selection |
+| `max_display` | `20` | Maximum branches to display |
+
+#### safety
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `confirm_remove` | `true` | Require confirmation before removing |
+| `check_uncommitted` | `true` | Check for uncommitted changes |
+| `auto_stash` | `false` | Automatically stash changes when removing |
+| `protect_main` | `true` | Prevent removing main worktree |
+| `protected_paths` | `[]` | Paths that cannot be removed |
+
+#### display
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `show_changes` | `true` | Show uncommitted change count |
+| `show_last_commit` | `false` | Show last commit info |
+| `language` | `en` | Message language (en, ko, ja) |
+
+### worktree Defaults
+
+```yaml
+worktree:
+  base_dir: ".."
+  naming_pattern: "{branch}"
+
+branch:
+  default_base: "main"
+  auto_fetch: true
+
+safety:
+  confirm_remove: true
+  check_uncommitted: true
+  protect_main: true
+```

@@ -26,6 +26,9 @@ Git worktree allows you to check out multiple branches simultaneously in separat
 # Show current worktree info
 /worktree info
 
+# Switch to another worktree
+/worktree switch ../feature-auth
+
 # Remove a worktree
 /worktree remove ../feature-auth
 ```
@@ -40,6 +43,8 @@ Git worktree allows you to check out multiple branches simultaneously in separat
 | `/worktree add -b <branch>` | Create new branch + worktree |
 | `/worktree remove <path>` | Remove worktree |
 | `/worktree info` | Current worktree details |
+| `/worktree switch` | Switch to another worktree (interactive) |
+| `/worktree switch <path>` | Switch to specific worktree |
 
 ## Options
 
@@ -91,6 +96,7 @@ parent-directory/
 
 - Each worktree is fully independent - changes don't affect other worktrees
 - Worktrees share the same `.git` database (saves disk space)
+- Use `/worktree switch` to change Claude Code's working directory to another worktree
 - Use `cd` to switch between worktrees in terminal
 - Branches checked out in worktrees cannot be checked out elsewhere
 
