@@ -195,14 +195,131 @@ Continue with more questions?
 - Storage: {storage}
 - API: {api}
 
-Ask more detail questions or generate design docs?
+Continue with functional design questions?
 ```
 
 ---
 
-## Step 5: Details (Optional)
+## Step 5: Functional Design (Required)
 
-### Question 6: Priority
+### Question 8: Core Use Cases
+
+```json
+{
+  "questions": [{
+    "header": "Use Cases",
+    "question": "What are the core use cases for this feature?",
+    "multiSelect": true,
+    "options": [
+      {"label": "CRUD operations", "description": "Create, Read, Update, Delete"},
+      {"label": "Data processing", "description": "Transform, aggregate, analyze"},
+      {"label": "User interaction", "description": "Forms, validation, feedback"},
+      {"label": "Generate design docs", "description": "Start design with current info"}
+    ]
+  }]
+}
+```
+
+**Follow-up if "Other" selected:**
+- Ask user to describe specific use cases
+- Format: "As a {user}, I want to {action} so that {benefit}"
+
+### Question 9: Interface Specification
+
+```json
+{
+  "questions": [{
+    "header": "Interface",
+    "question": "How detailed should the interface specification be?",
+    "multiSelect": false,
+    "options": [
+      {"label": "Detailed spec", "description": "Define each endpoint with request/response"},
+      {"label": "Standard patterns", "description": "Use RESTful conventions"},
+      {"label": "Minimal", "description": "Define during implementation"},
+      {"label": "Generate design docs", "description": "Start design with current info"}
+    ]
+  }]
+}
+```
+
+**If "Detailed spec" selected, follow-up:**
+```json
+{
+  "questions": [{
+    "header": "Endpoints",
+    "question": "Which operations need explicit interface definition?",
+    "multiSelect": true,
+    "options": [
+      {"label": "List/Query", "description": "GET with filters, pagination"},
+      {"label": "Create", "description": "POST with validation rules"},
+      {"label": "Update/Delete", "description": "PUT/PATCH/DELETE operations"},
+      {"label": "Generate design docs", "description": "Start design with current info"}
+    ]
+  }]
+}
+```
+
+### Question 10: Error Handling Strategy
+
+```json
+{
+  "questions": [{
+    "header": "Errors",
+    "question": "How should errors be handled?",
+    "multiSelect": false,
+    "options": [
+      {"label": "Comprehensive", "description": "Define error codes, messages, recovery"},
+      {"label": "Standard pattern", "description": "Follow project's existing error handling"},
+      {"label": "Basic", "description": "Standard HTTP status codes only"},
+      {"label": "Generate design docs", "description": "Start design with current info"}
+    ]
+  }]
+}
+```
+
+**If "Comprehensive" selected, include in design:**
+- Error code taxonomy (e.g., E001, E002)
+- User-facing error messages
+- Recovery/retry strategies
+- Logging requirements
+
+### Question 11: Security & Validation (Optional)
+
+```json
+{
+  "questions": [{
+    "header": "Security",
+    "question": "What security and validation requirements apply?",
+    "multiSelect": true,
+    "options": [
+      {"label": "Authentication", "description": "Login required for access"},
+      {"label": "Authorization", "description": "Role-based permissions"},
+      {"label": "Input validation", "description": "Strict input sanitization"},
+      {"label": "Generate design docs", "description": "Start design with current info"}
+    ]
+  }]
+}
+```
+
+---
+
+## Interim Summary 3
+
+```
+📋 Functional Design Summary:
+- Use cases: {use_cases}
+- Interface: {interface_level}
+- Error handling: {error_strategy}
+- Security: {security_requirements}
+
+Continue with optional questions or generate design docs?
+```
+
+---
+
+## Step 6: Details (Optional)
+
+### Question 12: Priority
 
 ```json
 {
@@ -220,7 +337,7 @@ Ask more detail questions or generate design docs?
 }
 ```
 
-### Question 7: Scheduling
+### Question 13: Scheduling
 
 ```json
 {

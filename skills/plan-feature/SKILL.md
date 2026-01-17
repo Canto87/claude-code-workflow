@@ -40,17 +40,21 @@ paths:
        ↓
 3. Codebase Analysis      → Explore related modules
        ↓
-   📋 Interim Summary
+   📋 Interim Summary 1
        ↓
 4. Architecture Q&A       → Integration, Storage, API
        ↓
-   📋 Interim Summary
+   📋 Interim Summary 2
        ↓
-5. Details (Optional)     → Priority, Scheduling
+5. Functional Design      → Use cases, Interface spec, Error handling
        ↓
-6. Preview & Confirm      → Show each file preview, allow edits
+   📋 Interim Summary 3
        ↓
-7. Generate Documents     → Write confirmed docs
+6. Details (Optional)     → Priority, Scheduling
+       ↓
+7. Preview & Confirm      → Show each file preview, allow edits
+       ↓
+8. Generate Documents     → Write confirmed docs
 ```
 
 **Key Rules:**
@@ -67,8 +71,12 @@ paths:
 | 4 | System integration (multiSelect) | O |
 | 4 | Data storage | O |
 | 4 | API requirement | O |
-| 5 | Priority | - |
-| 5 | Scheduling | - |
+| 5 | Core use cases (multiSelect) | O |
+| 5 | Interface specification | O |
+| 5 | Error handling strategy | O |
+| 5 | Security/Validation | - |
+| 6 | Priority | - |
+| 6 | Scheduling | - |
 
 ## Output
 
@@ -137,6 +145,9 @@ Recommended Phase count: 3-7
 - Core goal: {goal}
 - Integration: {systems}
 - Storage: {storage}
+- Use cases: {use_cases}
+- Interface: {interface_spec}
+- Error handling: {error_strategy}
 - Phase count: {count}
 
 ### Next Steps

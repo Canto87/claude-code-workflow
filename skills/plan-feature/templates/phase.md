@@ -23,6 +23,53 @@ Detailed design document for each phase.
 {Component diagram for this phase}
 ```
 
+## Use Cases for This Phase
+
+| ID | Use Case | Input | Output | Status |
+|----|----------|-------|--------|--------|
+| UC-{N}.1 | {use case name} | {input data} | {expected output} | Not implemented |
+| UC-{N}.2 | {use case name} | {input data} | {expected output} | Not implemented |
+
+## Interface Details
+
+### Endpoints Implemented in This Phase
+
+| Method | Endpoint | Request Body | Response | Notes |
+|--------|----------|--------------|----------|-------|
+| {METHOD} | `/api/{resource}` | `{schema}` | `{schema}` | {notes} |
+
+### Request/Response Schema
+
+**{Endpoint Name}**
+```json
+// Request
+{
+  "field1": "type: string, required",
+  "field2": "type: number, optional"
+}
+
+// Success Response
+{
+  "data": {...},
+  "message": "Success"
+}
+
+// Error Response
+{
+  "error": {
+    "code": "{ERROR_CODE}",
+    "message": "{message}"
+  }
+}
+```
+
+## Error Handling for This Phase
+
+| Scenario | Error Code | HTTP Status | Handling |
+|----------|------------|-------------|----------|
+| {scenario1} | {CODE} | {status} | {action} |
+| {scenario2} | {CODE} | {status} | {action} |
+
 ## Implementation
 
 ### 1. {Component 1}
@@ -116,12 +163,34 @@ After completing this phase → Implement `0{N+1}_{NEXT}.md`
 - Maximum: 7
 - Ideal: 4-5
 
+### Use Cases Writing Tips
+
+- Extract relevant use cases from OVERVIEW for this phase
+- Each phase should have 2-5 focused use cases
+- Include input/output for each use case
+- Mark status (Not implemented → In progress → Done)
+
+### Interface Details Writing Tips
+
+- Only include endpoints implemented in THIS phase
+- Reference OVERVIEW for full API spec
+- Include request/response examples
+- Document validation rules
+
+### Error Handling Writing Tips
+
+- List errors specific to this phase's functionality
+- Include both expected errors and edge cases
+- Document recovery actions
+- Reference OVERVIEW error codes
+
 ### Checklist Writing Tips
 
 - List in file creation order
 - Include test items
 - Specify integration tasks
 - Include documentation updates
+- Add interface/error handling verification
 
 ### Naming Conventions by Language
 
