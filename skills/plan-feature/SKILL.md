@@ -50,11 +50,13 @@ paths:
        ↓
    📋 Interim Summary 3
        ↓
-6. Details (Optional)     → Priority, Scheduling
+6. Auto Phase Proposal    → Analyze & suggest phase structure
        ↓
-7. Preview & Confirm      → Show each file preview, allow edits
+7. Details (Optional)     → Priority, Scheduling
        ↓
-8. Generate Documents     → Write confirmed docs
+8. Preview & Confirm      → Show each file preview, allow edits
+       ↓
+9. Generate Documents     → Write confirmed docs
 ```
 
 **Key Rules:**
@@ -75,8 +77,112 @@ paths:
 | 5 | Interface specification | O |
 | 5 | Error handling strategy | O |
 | 5 | Security/Validation | - |
-| 6 | Priority | - |
-| 6 | Scheduling | - |
+| 6 | Phase proposal confirmation | O |
+| 7 | Priority | - |
+| 7 | Scheduling | - |
+
+## Auto Phase Proposal
+
+After collecting functional design info, automatically analyze and propose phases.
+
+### Analysis Factors
+
+| Factor | Weight | Source |
+|--------|--------|--------|
+| Use case count | High | Step 5 answers |
+| Integration complexity | High | Step 4 answers |
+| Data model complexity | Medium | Storage selection |
+| API endpoint count | Medium | Interface spec |
+| Security requirements | Low | Security selection |
+
+### Phase Proposal Algorithm
+
+```
+1. Analyze Complexity
+   - Count use cases → estimate work units
+   - Check integrations → identify dependencies
+   - Evaluate storage → determine data layer work
+
+2. Identify Natural Boundaries
+   - Group related use cases
+   - Separate by dependency order
+   - Consider testing isolation
+
+3. Estimate Difficulty/Impact
+   - Foundation work → High impact, varies difficulty
+   - Core features → High impact, Medium difficulty
+   - Extensions → Lower impact, varies difficulty
+
+4. Generate Proposal
+   - Phase 1: Foundation (data model, base structure)
+   - Phase 2-N: Feature groups (by dependency)
+   - Final Phase: Polish (optimization, edge cases)
+```
+
+### Proposal Output Format
+
+```
+📋 Recommended Phase Structure
+
+Based on your requirements, I suggest {N} phases:
+
+┌─────────────────────────────────────────────────────────┐
+│ Phase 1: {Name}                                         │
+│ Difficulty: {Low/Medium/High} | Impact: {Low/Medium/High}│
+├─────────────────────────────────────────────────────────┤
+│ • {Component/Feature 1}                                 │
+│ • {Component/Feature 2}                                 │
+│ Why first: {Reasoning - e.g., "Foundation for others"}  │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│ Phase 2: {Name}                                         │
+│ Difficulty: {Low/Medium/High} | Impact: {Low/Medium/High}│
+├─────────────────────────────────────────────────────────┤
+│ • {Component/Feature 3}                                 │
+│ • {Component/Feature 4}                                 │
+│ Depends on: Phase 1                                     │
+└─────────────────────────────────────────────────────────┘
+
+... (more phases)
+
+Total estimated phases: {N}
+```
+
+### User Options
+
+```json
+{
+  "questions": [{
+    "header": "Phase Plan",
+    "question": "How would you like to proceed with this phase structure?",
+    "multiSelect": false,
+    "options": [
+      {"label": "Accept proposal", "description": "Use suggested {N} phases"},
+      {"label": "Fewer phases", "description": "Combine into fewer, larger phases"},
+      {"label": "More phases", "description": "Split into smaller, focused phases"},
+      {"label": "Custom structure", "description": "Define your own phases"}
+    ]
+  }]
+}
+```
+
+### Adjustment Rules
+
+**If "Fewer phases" selected:**
+- Merge phases with similar difficulty
+- Combine related features
+- Minimum: 2 phases
+
+**If "More phases" selected:**
+- Split complex phases
+- Isolate risky components
+- Maximum: 7 phases
+
+**If "Custom structure" selected:**
+- Ask user to describe desired phases
+- Validate dependencies
+- Generate based on user input
 
 ## Output
 
@@ -93,6 +199,7 @@ Generated in `{config.paths.plans}/{feature_name}/` folder:
 Templates:
 - [templates/overview.md](templates/overview.md) - OVERVIEW template
 - [templates/phase.md](templates/phase.md) - Phase template
+- [templates/phase-analysis.md](templates/phase-analysis.md) - Phase analysis guide
 
 ## Preview & Confirm Flow
 

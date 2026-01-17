@@ -312,14 +312,171 @@ Continue with functional design questions?
 - Error handling: {error_strategy}
 - Security: {security_requirements}
 
-Continue with optional questions or generate design docs?
+Analyzing requirements to propose phase structure...
 ```
 
 ---
 
-## Step 6: Details (Optional)
+## Step 6: Auto Phase Proposal
 
-### Question 12: Priority
+### Phase Analysis Process
+
+Before asking for confirmation, analyze collected information:
+
+```
+1. Count Complexity Factors:
+   - Use cases selected: {count}
+   - Integrations required: {count}
+   - API endpoints needed: {estimated}
+   - Security layers: {count}
+
+2. Calculate Recommended Phases:
+   - Base: 3 phases (minimum)
+   - +1 if integrations > 2
+   - +1 if use cases include all types
+   - +1 if security includes auth + authz
+   - Max: 7 phases
+
+3. Determine Phase Contents:
+   Phase 1 (Foundation):
+     - Data model setup
+     - Basic storage layer
+     - Core types/interfaces
+
+   Phase 2+ (Features):
+     - Group by dependency
+     - One major use case per phase
+     - Include related endpoints
+
+   Final Phase (Polish):
+     - Error handling refinement
+     - Security hardening
+     - Performance optimization
+```
+
+### Phase Proposal Display
+
+Show this to user before asking:
+
+```
+📋 Recommended Phase Structure
+
+Based on your requirements:
+- {X} use cases
+- {Y} integrations
+- {Z} API endpoints
+- Security: {level}
+
+I recommend {N} phases:
+
+┌──────────────────────────────────────────────┐
+│ Phase 1: Foundation                          │
+│ Difficulty: Medium | Impact: High            │
+├──────────────────────────────────────────────┤
+│ • Data models and types                      │
+│ • Storage layer ({storage_type})             │
+│ • Base configuration                         │
+│ Why first: Required by all other phases      │
+└──────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────┐
+│ Phase 2: Core Features                       │
+│ Difficulty: {diff} | Impact: High            │
+├──────────────────────────────────────────────┤
+│ • {Primary use case implementation}          │
+│ • {Related API endpoints}                    │
+│ • Basic error handling                       │
+│ Depends on: Phase 1                          │
+└──────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────┐
+│ Phase 3: {Additional Features / Integration} │
+│ Difficulty: {diff} | Impact: Medium          │
+├──────────────────────────────────────────────┤
+│ • {Secondary use cases}                      │
+│ • {Integration with external systems}        │
+│ Depends on: Phase 1, 2                       │
+└──────────────────────────────────────────────┘
+
+{... more phases if needed ...}
+
+Dependency Graph:
+Phase 1 ──→ Phase 2 ──→ Phase 3
+              ↘──→ Phase 4 (parallel possible)
+```
+
+### Question 12: Phase Proposal Confirmation
+
+```json
+{
+  "questions": [{
+    "header": "Phase Plan",
+    "question": "How would you like to proceed with this {N}-phase structure?",
+    "multiSelect": false,
+    "options": [
+      {"label": "Accept proposal", "description": "Use the suggested {N} phases"},
+      {"label": "Fewer phases", "description": "Combine into {N-1} or fewer phases"},
+      {"label": "More phases", "description": "Split into {N+1} or more phases"},
+      {"label": "Custom structure", "description": "I'll describe my own phases"}
+    ]
+  }]
+}
+```
+
+### Follow-up: Fewer Phases
+
+```json
+{
+  "questions": [{
+    "header": "Combine",
+    "question": "Which phases should be combined?",
+    "multiSelect": false,
+    "options": [
+      {"label": "Merge 1+2", "description": "Foundation + Core together"},
+      {"label": "Merge later phases", "description": "Combine feature phases"},
+      {"label": "Minimum (2)", "description": "Foundation + Everything else"},
+      {"label": "Back", "description": "Return to original proposal"}
+    ]
+  }]
+}
+```
+
+### Follow-up: More Phases
+
+```json
+{
+  "questions": [{
+    "header": "Split",
+    "question": "What should be split into separate phases?",
+    "multiSelect": true,
+    "options": [
+      {"label": "Separate each use case", "description": "One use case per phase"},
+      {"label": "Separate integrations", "description": "Each integration = 1 phase"},
+      {"label": "Isolate security", "description": "Dedicated security phase"},
+      {"label": "Back", "description": "Return to original proposal"}
+    ]
+  }]
+}
+```
+
+### Follow-up: Custom Structure
+
+```
+Please describe your preferred phase structure.
+
+Format:
+- Phase 1: {name} - {what it includes}
+- Phase 2: {name} - {what it includes}
+...
+
+I'll validate dependencies and adjust the design documents accordingly.
+```
+
+---
+
+## Step 7: Details (Optional)
+
+### Question 14: Priority
 
 ```json
 {
@@ -337,7 +494,7 @@ Continue with optional questions or generate design docs?
 }
 ```
 
-### Question 13: Scheduling
+### Question 15: Scheduling
 
 ```json
 {
