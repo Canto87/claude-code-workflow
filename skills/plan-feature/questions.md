@@ -576,6 +576,74 @@ I'll validate dependencies and adjust the design documents accordingly.
 
 ---
 
+## Step 6.5: Risk Analysis Summary
+
+After phase structure is confirmed, display risk analysis:
+
+```
+⚠️  Risk Assessment Summary
+
+Overall Risk Level: {Low/Medium/High/Critical}
+
+┌─────────────────────────────────────────────────────────────┐
+│ Risk                     │ Impact │ Probability │ Level     │
+├─────────────────────────────────────────────────────────────┤
+│ {Database schema change} │ High   │ High        │ Critical  │
+│ {External API dependency}│ Medium │ Medium      │ Medium    │
+│ {New framework usage}    │ Low    │ High        │ Medium    │
+└─────────────────────────────────────────────────────────────┘
+
+Phase-Specific Risks:
+┌─────────────────────────────────────────────────────────────┐
+│ Phase │ Risk Level │ Top Risk               │ Rollback     │
+├─────────────────────────────────────────────────────────────┤
+│ 1     │ High       │ Database migration     │ Hard         │
+│ 2     │ Medium     │ API integration        │ Medium       │
+│ 3     │ Low        │ UI changes             │ Easy         │
+└─────────────────────────────────────────────────────────────┘
+
+🛡️  Key Mitigations:
+1. {risk}: {mitigation action}
+2. {risk}: {mitigation action}
+3. {risk}: {mitigation action}
+
+📋 Pre-Implementation Checklist:
+- [ ] Backup existing data/schema before Phase 1
+- [ ] Create feature flags for gradual rollout
+- [ ] Prepare rollback scripts for each phase
+- [ ] Document all breaking changes
+
+Proceed to generate design documents with this risk assessment?
+```
+
+### Risk Detection Rules
+
+Apply these rules to identify risks:
+
+| Trigger | Risk Category | Level Increase |
+|---------|---------------|----------------|
+| Database migration | Technical | +2 (Critical) |
+| External API integration | Dependency | +1 (High) |
+| Shared component change | Integration | +2 (Critical) |
+| New technology stack | Technical | +1 (High) |
+| Authentication/Authorization | Security | +1 (High) |
+| Data encryption | Security | +1 (High) |
+| Breaking API change | Integration | +3 (Critical) |
+| Multiple system coordination | Integration | +1 (High) |
+
+### Rollback Difficulty Assessment
+
+| Change Type | Rollback | Strategy |
+|-------------|----------|----------|
+| Database schema change | Hard | Backup required, migration script rollback |
+| Data migration | Hard | Point-in-time restore |
+| Config change | Easy | Revert config file |
+| Code change only | Medium | Git revert, redeploy |
+| Feature flag guarded | Easy | Disable flag |
+| External integration | Medium | Fallback mechanism |
+
+---
+
 ## Step 7: Details (Optional)
 
 ### Question 14: Priority

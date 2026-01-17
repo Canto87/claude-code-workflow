@@ -70,6 +70,40 @@ Detailed design document for each phase.
 | {scenario1} | {CODE} | {status} | {action} |
 | {scenario2} | {CODE} | {status} | {action} |
 
+## Risk Assessment for This Phase
+
+### Risk Level: {Low/Medium/High/Critical}
+
+### Identified Risks
+
+| Risk | Category | Impact | Probability | Level | Mitigation |
+|------|----------|--------|-------------|-------|------------|
+| {risk1} | {Technical/Dependency/Integration} | {High/Medium/Low} | {High/Medium/Low} | {Critical/High/Medium/Low} | {action} |
+| {risk2} | {Technical/Dependency/Integration} | {High/Medium/Low} | {High/Medium/Low} | {Critical/High/Medium/Low} | {action} |
+
+### Dependencies
+
+| Dependency | Type | Status | Risk if Unavailable |
+|------------|------|--------|---------------------|
+| Phase {N-1} completion | Internal | {Required/Optional} | {impact} |
+| {External service/API} | External | {Available/Pending} | {impact} |
+| {Shared component} | Internal | {Stable/Changing} | {impact} |
+
+### Rollback Plan
+
+**Rollback Difficulty**: {Easy/Medium/Hard}
+
+**Strategy**:
+- {Step 1: e.g., Revert migration script}
+- {Step 2: e.g., Restore from backup}
+- {Step 3: e.g., Disable feature flag}
+
+**Pre-Implementation Checklist**:
+- [ ] Backup existing data/configuration
+- [ ] Create feature flag for gradual rollout
+- [ ] Prepare rollback script
+- [ ] Notify dependent teams
+
 ## Implementation
 
 ### 1. {Component 1}
@@ -183,6 +217,22 @@ After completing this phase → Implement `0{N+1}_{NEXT}.md`
 - Include both expected errors and edge cases
 - Document recovery actions
 - Reference OVERVIEW error codes
+
+### Risk Assessment Writing Tips
+
+- Identify top 3-5 risks for this specific phase
+- Assess impact and probability realistically
+- Include risks from:
+  - Technical complexity (new technology, complex algorithms)
+  - Dependencies (external APIs, shared components)
+  - Integration (breaking changes, data migration)
+- Define concrete rollback steps
+- Consider:
+  - Database changes → Hard to rollback, backup required
+  - Config changes → Easy to rollback
+  - Code changes → Medium, may need revert commit
+- Mark dependencies clearly (required vs optional)
+- Cross-reference with OVERVIEW risk assessment
 
 ### Checklist Writing Tips
 

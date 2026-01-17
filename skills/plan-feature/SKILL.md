@@ -181,6 +181,116 @@ Analysis results feed into Auto Phase Proposal:
 - Dependencies → Inform phase ordering
 - Complexity → Adjust difficulty estimates
 
+## Risk Analysis
+
+Automatically identify potential risks for each phase and the overall feature.
+
+### Risk Categories
+
+| Category | Description | Detection Method |
+|----------|-------------|------------------|
+| Technical | Implementation complexity, new technology | Complexity scoring |
+| Dependency | External service, shared component impact | Codebase analysis |
+| Integration | Breaking changes, API compatibility | Import/usage analysis |
+| Performance | Scalability, resource usage | Data model analysis |
+| Security | Auth gaps, data exposure | Security requirements |
+
+### Risk Scoring Matrix
+
+| Impact | Low Probability | Medium Probability | High Probability |
+|--------|-----------------|-------------------|------------------|
+| High | Medium Risk | High Risk | Critical Risk |
+| Medium | Low Risk | Medium Risk | High Risk |
+| Low | Minimal Risk | Low Risk | Medium Risk |
+
+### Risk Detection Rules
+
+```
+1. Technical Risks
+   - New technology/framework → Medium-High
+   - Complex algorithm → Medium
+   - Third-party API integration → Medium
+   - Database schema change → High
+
+2. Dependency Risks
+   - Shared component modification → High
+   - External service dependency → Medium-High
+   - Cross-module coupling → Medium
+
+3. Integration Risks
+   - API breaking change → Critical
+   - Data migration required → High
+   - Multiple system coordination → Medium
+
+4. Rollback Complexity
+   - Database change → Hard to rollback
+   - Config change → Easy to rollback
+   - Code change → Medium to rollback
+```
+
+### Risk Output Format
+
+```
+⚠️  Risk Assessment
+
+Overall Risk Level: {Low/Medium/High/Critical}
+
+┌─────────────────────────────────────────────────────────────┐
+│ Risk                    │ Impact │ Probability │ Level     │
+├─────────────────────────────────────────────────────────────┤
+│ {Database schema change}│ High   │ High        │ Critical  │
+│ {External API dependency}│ Medium │ Medium      │ Medium   │
+│ {New framework usage}   │ Low    │ High        │ Medium    │
+└─────────────────────────────────────────────────────────────┘
+
+🔄 Rollback Strategy
+Phase 1: {Easy/Medium/Hard} - {strategy}
+Phase 2: {Easy/Medium/Hard} - {strategy}
+Phase 3: {Easy/Medium/Hard} - {strategy}
+
+🛡️  Mitigation Recommendations
+1. {risk}: {mitigation action}
+2. {risk}: {mitigation action}
+3. {risk}: {mitigation action}
+
+📋 Pre-Implementation Checklist
+- [ ] {Backup existing data before migration}
+- [ ] {Create feature flag for gradual rollout}
+- [ ] {Prepare rollback script}
+- [ ] {Document breaking changes}
+```
+
+### Phase-Specific Risk Analysis
+
+Each phase document includes:
+
+| Section | Content |
+|---------|---------|
+| Risk Summary | Top 3 risks for this phase |
+| Dependencies | What this phase depends on |
+| Impact Scope | What this phase affects |
+| Rollback Plan | How to undo changes |
+| Mitigation | Actions to reduce risk |
+
+### Risk Triggers
+
+| Trigger | Risk Level Increase |
+|---------|-------------------|
+| Database migration | +2 |
+| External API integration | +1 |
+| Shared component change | +2 |
+| New technology stack | +1 |
+| Authentication/Authorization | +1 |
+| Data encryption | +1 |
+| Breaking API change | +3 |
+
+### Integration with Phase Proposal
+
+Risk analysis affects phase planning:
+- High-risk items → Dedicated phase or early phase
+- Critical risks → May split into smaller phases
+- Rollback complexity → Influences phase ordering
+
 ## Auto Phase Proposal
 
 After collecting functional design info, automatically analyze and propose phases.
