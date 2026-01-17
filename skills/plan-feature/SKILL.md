@@ -44,6 +44,8 @@ paths:
        ↓
 4. Architecture Q&A       → Integration, Storage, API
        ↓
+4.5 Alternative Architecture → Propose & compare architecture options
+       ↓
    📋 Interim Summary 2
        ↓
 5. Functional Design      → Use cases, Interface spec, Error handling
@@ -51,6 +53,8 @@ paths:
    📋 Interim Summary 3
        ↓
 6. Auto Phase Proposal    → Analyze & suggest phase structure
+       ↓
+6.5 Risk Analysis         → Identify risks & rollback strategies
        ↓
 7. Details (Optional)     → Priority, Scheduling
        ↓
@@ -73,6 +77,7 @@ paths:
 | 4 | System integration (multiSelect) | O |
 | 4 | Data storage | O |
 | 4 | API requirement | O |
+| 4.5 | Architecture option selection | O |
 | 5 | Core use cases (multiSelect) | O |
 | 5 | Interface specification | O |
 | 5 | Error handling strategy | O |
@@ -180,6 +185,160 @@ Analysis results feed into Auto Phase Proposal:
 - Existing patterns → Follow conventions in all phases
 - Dependencies → Inform phase ordering
 - Complexity → Adjust difficulty estimates
+
+## Alternative Architecture (Step 4.5)
+
+Propose multiple architecture options based on requirements and let user choose.
+
+### When to Propose Alternatives
+
+| Condition | Trigger |
+|-----------|---------|
+| Multiple valid patterns | Detected architecture allows variations |
+| Complex integration | 3+ system integrations selected |
+| Scalability concern | High traffic/data volume expected |
+| New technology | Unfamiliar tech stack mentioned |
+| Trade-off decision | Clear pros/cons between approaches |
+
+### Architecture Option Generation
+
+```
+1. Analyze Requirements
+   - Feature complexity (use cases, integrations)
+   - Non-functional requirements (scalability, maintainability)
+   - Existing codebase patterns
+   - Team familiarity (inferred from codebase)
+
+2. Generate Options
+   - Option A: Conservative (follow existing patterns)
+   - Option B: Optimized (best fit for requirements)
+   - Option C: Future-proof (scalable, extensible)
+
+3. Evaluate Each Option
+   - Pros/Cons analysis
+   - Risk assessment
+   - Effort estimation (relative)
+   - Long-term implications
+```
+
+### Comparison Criteria
+
+| Criteria | Weight | Description |
+|----------|--------|-------------|
+| Consistency | High | Alignment with existing codebase |
+| Complexity | High | Implementation and maintenance effort |
+| Scalability | Medium | Growth and performance capacity |
+| Flexibility | Medium | Ease of future changes |
+| Risk | Medium | Implementation and integration risks |
+| Team Fit | Low | Team's familiarity with approach |
+
+### Option Output Format
+
+```
+🏗️  Architecture Options
+
+Based on your requirements, here are {N} architecture approaches:
+
+┌─────────────────────────────────────────────────────────────┐
+│ Option A: {Name} (Recommended)                              │
+│ Approach: {Brief description}                               │
+├─────────────────────────────────────────────────────────────┤
+│ ✅ Pros                      │ ⚠️  Cons                      │
+│ • {Consistent with codebase} │ • {Limited scalability}       │
+│ • {Lower complexity}         │ • {May need refactor later}   │
+│ • {Faster implementation}    │ •                             │
+├─────────────────────────────────────────────────────────────┤
+│ Effort: Low-Medium | Risk: Low | Scalability: Medium        │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│ Option B: {Name}                                            │
+│ Approach: {Brief description}                               │
+├─────────────────────────────────────────────────────────────┤
+│ ✅ Pros                      │ ⚠️  Cons                      │
+│ • {Better scalability}       │ • {Higher initial complexity} │
+│ • {Cleaner separation}       │ • {Deviates from current}     │
+│ • {Easier testing}           │ • {Longer implementation}     │
+├─────────────────────────────────────────────────────────────┤
+│ Effort: Medium-High | Risk: Medium | Scalability: High      │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│ Option C: {Name}                                            │
+│ Approach: {Brief description}                               │
+├─────────────────────────────────────────────────────────────┤
+│ ✅ Pros                      │ ⚠️  Cons                      │
+│ • {Maximum flexibility}      │ • {Highest complexity}        │
+│ • {Future-proof design}      │ • {Over-engineering risk}     │
+│ • {Best practices}           │ • {Steeper learning curve}    │
+├─────────────────────────────────────────────────────────────┤
+│ Effort: High | Risk: Medium-High | Scalability: Very High   │
+└─────────────────────────────────────────────────────────────┘
+
+💡 Recommendation: Option A
+   Reason: {Best balance of consistency and requirements}
+```
+
+### Common Architecture Patterns
+
+| Pattern | Best For | Trade-offs |
+|---------|----------|------------|
+| Layered | Simple CRUD, small teams | Easy but can become monolithic |
+| Clean/Hexagonal | Complex domains, testability | More boilerplate, steeper curve |
+| Microservices | High scale, team autonomy | Operational complexity |
+| Event-driven | Async workflows, decoupling | Debugging complexity |
+| CQRS | Read/write asymmetry | Eventual consistency |
+| Modular Monolith | Growing projects | Balance of simplicity/modularity |
+
+### User Selection Flow
+
+```json
+{
+  "questions": [{
+    "header": "Architecture",
+    "question": "Which architecture approach would you like to use?",
+    "multiSelect": false,
+    "options": [
+      {"label": "Option A (Recommended)", "description": "{Conservative approach following existing patterns}"},
+      {"label": "Option B", "description": "{Optimized for scalability with moderate changes}"},
+      {"label": "Option C", "description": "{Future-proof with significant restructuring}"},
+      {"label": "Custom approach", "description": "Describe your preferred architecture"}
+    ]
+  }]
+}
+```
+
+### Impact on Phase Proposal
+
+Selected architecture affects phase structure:
+
+| Selection | Phase Impact |
+|-----------|--------------|
+| Conservative | Fewer phases, follow existing structure |
+| Optimized | May need infrastructure phase first |
+| Future-proof | Additional phases for patterns/abstractions |
+| Custom | Adjust based on user description |
+
+### Architecture Decision Record (ADR)
+
+For selected architecture, generate ADR in OVERVIEW:
+
+```markdown
+## Architecture Decision
+
+**Selected**: {Option name}
+**Alternatives Considered**: {Other options}
+**Decision Rationale**: {Why this option}
+
+### Key Trade-offs Accepted
+- {Trade-off 1}: {Accepted because...}
+- {Trade-off 2}: {Mitigated by...}
+
+### Constraints
+- Must integrate with existing {system}
+- Should follow {pattern} conventions
+- Limited by {constraint}
+```
 
 ## Risk Analysis
 

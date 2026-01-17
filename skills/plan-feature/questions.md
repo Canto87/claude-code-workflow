@@ -287,6 +287,122 @@ Continue with more questions?
 
 ---
 
+## Step 4.5: Alternative Architecture Proposal
+
+Based on codebase analysis and requirements, propose architecture options.
+
+### Architecture Analysis Output
+
+```
+🏗️  Architecture Options
+
+Based on your requirements ({use_cases} use cases, {integrations} integrations, {storage} storage):
+
+┌─────────────────────────────────────────────────────────────┐
+│ Option A: {Layered Architecture} (Recommended)              │
+│ Follow existing project patterns                            │
+├─────────────────────────────────────────────────────────────┤
+│ ✅ Pros                      │ ⚠️  Cons                      │
+│ • Consistent with codebase   │ • Limited scalability         │
+│ • Lower learning curve       │ • Tighter coupling            │
+│ • Faster implementation      │ •                             │
+├─────────────────────────────────────────────────────────────┤
+│ Effort: Low | Risk: Low | Scalability: Medium               │
+│ Best for: Simple features, tight deadlines                  │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│ Option B: {Clean Architecture}                              │
+│ Separate domain from infrastructure                         │
+├─────────────────────────────────────────────────────────────┤
+│ ✅ Pros                      │ ⚠️  Cons                      │
+│ • Better testability         │ • More boilerplate            │
+│ • Clear boundaries           │ • Deviates from existing      │
+│ • Easier maintenance         │ • Steeper learning curve      │
+├─────────────────────────────────────────────────────────────┤
+│ Effort: Medium | Risk: Medium | Scalability: High           │
+│ Best for: Complex domains, long-term maintenance            │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│ Option C: {Event-Driven}                                    │
+│ Async processing with event bus                             │
+├─────────────────────────────────────────────────────────────┤
+│ ✅ Pros                      │ ⚠️  Cons                      │
+│ • Highly scalable            │ • Highest complexity          │
+│ • Loose coupling             │ • Debugging difficulty        │
+│ • Better resilience          │ • Eventual consistency        │
+├─────────────────────────────────────────────────────────────┤
+│ Effort: High | Risk: High | Scalability: Very High          │
+│ Best for: High throughput, distributed systems              │
+└─────────────────────────────────────────────────────────────┘
+
+💡 Recommendation: Option A
+   Reason: Best balance of consistency with existing codebase and implementation speed
+```
+
+### Question 6: Architecture Selection
+
+```json
+{
+  "questions": [{
+    "header": "Architecture",
+    "question": "Which architecture approach would you like to use?",
+    "multiSelect": false,
+    "options": [
+      {"label": "Option A (Recommended)", "description": "{Pattern name} - follows existing patterns"},
+      {"label": "Option B", "description": "{Pattern name} - better separation"},
+      {"label": "Option C", "description": "{Pattern name} - maximum scalability"},
+      {"label": "Generate design docs", "description": "Start design with current info"}
+    ]
+  }]
+}
+```
+
+### Follow-up: Custom Architecture
+
+If user selects "Other":
+
+```
+Please describe your preferred architecture approach.
+
+Consider specifying:
+- Layer structure (e.g., controller → service → repository)
+- Key patterns (e.g., Repository, Factory, Observer)
+- Module boundaries (e.g., separate by feature or layer)
+- Data flow (e.g., sync/async, event-driven)
+
+I'll incorporate your approach into the design documents.
+```
+
+### Architecture Impact Summary
+
+After selection, display impact:
+
+```
+✅ Architecture Selected: {Option name}
+
+📁 Recommended Structure:
+{source_path}/
+├── {layer1}/          ← {description}
+│   └── {feature}/
+├── {layer2}/          ← {description}
+│   └── {feature}/
+└── {layer3}/          ← {description}
+    └── {feature}/
+
+🔗 Key Patterns to Follow:
+- {Pattern 1}: {where to use}
+- {Pattern 2}: {where to use}
+- {Pattern 3}: {where to use}
+
+⚠️  Trade-offs Accepted:
+- {Trade-off 1}
+- {Trade-off 2}
+```
+
+---
+
 ## Interim Summary 2
 
 ```
@@ -296,6 +412,7 @@ Continue with more questions?
 - Integration: {systems}
 - Storage: {storage}
 - API: {api}
+- Architecture: {selected_architecture}
 
 Continue with functional design questions?
 ```

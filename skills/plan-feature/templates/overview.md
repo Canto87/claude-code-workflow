@@ -19,6 +19,56 @@ Overview file for design documents.
 {ASCII diagram}
 ```
 
+## Architecture Decision
+
+**Selected Approach**: {Option name} - {Pattern name}
+
+**Alternatives Considered**:
+| Option | Pattern | Why Not Selected |
+|--------|---------|------------------|
+| {Option B} | {Pattern} | {Reason - e.g., "Over-engineering for current scope"} |
+| {Option C} | {Pattern} | {Reason - e.g., "Team unfamiliar with pattern"} |
+
+**Decision Rationale**:
+{Why this architecture was chosen - e.g., "Best balance of consistency with existing codebase and implementation speed. Allows future migration to more complex patterns if needed."}
+
+### Key Trade-offs Accepted
+
+| Trade-off | Impact | Mitigation |
+|-----------|--------|------------|
+| {Limited scalability} | {Medium} | {Can refactor to Option B if load increases} |
+| {Tighter coupling} | {Low} | {Use interfaces at boundaries} |
+
+### Architecture Constraints
+
+- Must integrate with existing {system/component}
+- Should follow {pattern} conventions used in project
+- Limited by {constraint - e.g., "current team expertise"}
+
+### Recommended Structure
+
+```
+{source_path}/
+├── {layer1}/              ← {description}
+│   └── {feature}/
+│       ├── {file1}.{ext}  ← {component description}
+│       └── {file2}.{ext}  ← {component description}
+├── {layer2}/              ← {description}
+│   └── {feature}/
+│       └── {file}.{ext}   ← {component description}
+└── {layer3}/              ← {description}
+    └── {feature}/
+        └── {file}.{ext}   ← {component description}
+```
+
+### Key Patterns to Follow
+
+| Pattern | Where to Use | Example |
+|---------|--------------|---------|
+| {Repository} | {Data access layer} | `{feature}Repository` |
+| {Service} | {Business logic} | `{feature}Service` |
+| {Handler/Controller} | {API layer} | `{feature}Handler` |
+
 ## Use Cases
 
 ### Primary Use Cases
