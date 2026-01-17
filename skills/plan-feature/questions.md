@@ -79,20 +79,122 @@ storage:
 
 ---
 
-## Step 3: Codebase Analysis
+## Step 3: Intelligent Codebase Analysis
 
-No questions - automatic analysis:
+No questions - automatic deep analysis using Task tool with Explore agent.
 
-```bash
-# Paths determined by config
-ls -la {config.paths.source}/
-ls -la {config.paths.apps}/
-cat CLAUDE.md  # Read if exists
+### Analysis Steps
+
+```
+1. Structure Scan
+   - Glob: {config.paths.source}/**/*
+   - Identify directory patterns
+   - Detect architecture style
+
+2. Component Discovery
+   - Grep: "type.*struct" (Go), "class.*{" (TS/Java), "def.*:" (Python)
+   - Find interfaces, types, classes
+   - Identify shared utilities
+
+3. Dependency Analysis
+   - Grep: import/require statements
+   - Map module relationships
+   - Detect potential reuse
+
+4. Pattern Recognition
+   - Check for common patterns (Repository, Service, Handler)
+   - Identify naming conventions
+   - Find configuration patterns
 ```
 
-**Config-based component exploration:**
-- Reference `integrations` items from `config.yaml`
-- If no config, analyze directory structure and recommend
+### Language-Specific Analysis
+
+**Go:**
+```bash
+# Find types and interfaces
+grep -r "type.*struct\|type.*interface" {source}/
+# Find packages
+ls -d {source}/*/
+# Check go.mod for dependencies
+cat go.mod
+```
+
+**TypeScript:**
+```bash
+# Find classes and interfaces
+grep -r "class.*{$\|interface.*{$\|type.*=" {source}/
+# Check package.json
+cat package.json
+```
+
+**Python:**
+```bash
+# Find classes
+grep -r "class.*:" {source}/
+# Check requirements
+cat requirements.txt
+```
+
+### Architecture Detection Rules
+
+| Directory Pattern | Detected Architecture | Confidence |
+|-------------------|----------------------|------------|
+| `domain/`, `usecase/`, `adapter/` | Clean Architecture | High |
+| `models/`, `views/`, `controllers/` | MVC | High |
+| `api/`, `service/`, `repository/` | Layered | High |
+| `ports/`, `adapters/` | Hexagonal | High |
+| `modules/{name}/` | Modular Monolith | Medium |
+| `{feature}/handler.go`, `{feature}/service.go` | Feature-based | Medium |
+| Single `src/` or `internal/` | Undetermined | Low |
+
+### Reusable Component Identification
+
+Scan for common reusable components:
+
+| Component Type | Search Pattern | Reuse Potential |
+|---------------|----------------|-----------------|
+| Database client | `db`, `database`, `store` | High |
+| HTTP client | `client`, `http`, `api` | High |
+| Logger | `log`, `logger` | High |
+| Config loader | `config`, `cfg`, `env` | High |
+| Validators | `valid`, `validator` | Medium |
+| Middleware | `middleware`, `interceptor` | Medium |
+| Utils/Helpers | `util`, `helper`, `common` | Medium |
+
+### Output to Interim Summary 1
+
+```
+🔍 Codebase Analysis Results
+
+Architecture: {detected} ({confidence} confidence)
+Language: {language}
+
+📁 Directory Structure
+{source}/
+├── {dir1}/     ← {layer_type}: {description}
+├── {dir2}/     ← {layer_type}: {description}
+└── {dir3}/     ← {layer_type}: {description}
+
+♻️  Reusable Components Found
+| Component | Location | Type | Recommendation |
+|-----------|----------|------|----------------|
+| {name1} | {path1} | {type1} | Direct reuse |
+| {name2} | {path2} | {type2} | Extend |
+| {name3} | {path3} | {type3} | Reference pattern |
+
+🔗 Existing Integrations
+- {integration1}: {path} - {status}
+- {integration2}: {path} - {status}
+
+📋 Recommendations for {feature_name}
+- Follow {architecture} pattern
+- Reuse {component} for {purpose}
+- Create new {component_type} in {suggested_path}/
+- Consider {existing_module} integration
+
+⚠️  Notes
+- {warning_or_consideration}
+```
 
 ---
 

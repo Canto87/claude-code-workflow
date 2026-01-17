@@ -81,6 +81,106 @@ paths:
 | 7 | Priority | - |
 | 7 | Scheduling | - |
 
+## Intelligent Codebase Analysis (Step 3)
+
+Automatically analyze the codebase to identify reusable components and architecture patterns.
+
+### Analysis Targets
+
+| Target | Method | Output |
+|--------|--------|--------|
+| Directory structure | Glob patterns | Architecture pattern detection |
+| Existing modules | File/folder scan | Reusable component list |
+| Dependencies | Import analysis | Dependency graph |
+| Patterns | Code grep | Design pattern recognition |
+
+### Analysis Process
+
+```
+1. Structure Analysis
+   - Scan {config.paths.source}/ directory
+   - Identify layer patterns (handler, service, repository, etc.)
+   - Detect existing module boundaries
+
+2. Component Discovery
+   - Find existing types/interfaces
+   - Identify shared utilities
+   - Locate configuration patterns
+
+3. Dependency Mapping
+   - Trace import relationships
+   - Build dependency graph
+   - Identify circular dependencies
+
+4. Pattern Recognition
+   - Detect architecture style (MVC, Clean, Hexagonal, etc.)
+   - Identify coding conventions
+   - Find reusable patterns
+```
+
+### Architecture Pattern Detection
+
+| Pattern | Indicators | Recommended Structure |
+|---------|------------|----------------------|
+| Clean Architecture | `domain/`, `usecase/`, `interface/` | Follow existing layers |
+| MVC | `models/`, `views/`, `controllers/` | Add to respective folders |
+| Hexagonal | `ports/`, `adapters/`, `core/` | Create port/adapter pair |
+| Layered | `api/`, `service/`, `repository/` | Add new layer components |
+| Modular | `modules/{name}/` | Create new module folder |
+
+### Analysis Output Format
+
+```
+🔍 Codebase Analysis Results
+
+Architecture: {detected_pattern}
+Language: {project.language}
+
+📁 Structure
+{source_path}/
+├── {layer1}/          ← {description}
+├── {layer2}/          ← {description}
+└── {layer3}/          ← {description}
+
+♻️  Reusable Components
+┌─────────────────────────────────────────────┐
+│ Component        │ Path           │ Reuse   │
+├─────────────────────────────────────────────┤
+│ {DatabaseClient} │ {path/to/db}   │ Direct  │
+│ {Logger}         │ {path/to/log}  │ Direct  │
+│ {HTTPClient}     │ {path/to/http} │ Wrap    │
+│ {ConfigLoader}   │ {path/to/cfg}  │ Extend  │
+└─────────────────────────────────────────────┘
+
+🔗 Dependency Suggestions
+- Use existing {component} for {purpose}
+- Extend {interface} for {new_feature}
+- Follow {pattern} convention for consistency
+
+⚠️  Considerations
+- {existing_module} may need modification
+- {shared_component} is used by {N} modules
+- Avoid circular dependency with {module}
+```
+
+### Reuse Categories
+
+| Category | Description | Action |
+|----------|-------------|--------|
+| Direct | Use as-is | Import directly |
+| Wrap | Add thin wrapper | Create adapter |
+| Extend | Add new methods | Extend interface |
+| Reference | Copy pattern | Follow convention |
+| Avoid | Don't use | Create new component |
+
+### Integration with Phase Proposal
+
+Analysis results feed into Auto Phase Proposal:
+- Reusable components → Reduce Phase 1 scope
+- Existing patterns → Follow conventions in all phases
+- Dependencies → Inform phase ordering
+- Complexity → Adjust difficulty estimates
+
 ## Auto Phase Proposal
 
 After collecting functional design info, automatically analyze and propose phases.
@@ -200,6 +300,7 @@ Templates:
 - [templates/overview.md](templates/overview.md) - OVERVIEW template
 - [templates/phase.md](templates/phase.md) - Phase template
 - [templates/phase-analysis.md](templates/phase-analysis.md) - Phase analysis guide
+- [templates/codebase-analysis.md](templates/codebase-analysis.md) - Codebase analysis guide
 
 ## Preview & Confirm Flow
 
