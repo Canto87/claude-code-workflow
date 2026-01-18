@@ -801,6 +801,109 @@ Apply these rules to identify risks:
 
 ---
 
+## Step 7.5: Validation
+
+Automatically validate collected information before preview.
+
+### Validation Output
+
+```
+🔍 Validation Results
+
+┌─────────────────────────────────────────────────────────────┐
+│ Category        │ Status │ Issues                           │
+├─────────────────────────────────────────────────────────────┤
+│ Completeness    │ ✅ Pass │ All required fields present      │
+│ Consistency     │ ⚠️ Warn │ 2 issues found                   │
+│ Dependency      │ ✅ Pass │ Phase order valid                │
+│ Coverage        │ ⚠️ Warn │ 1 issue found                    │
+│ Quality         │ ✅ Pass │ Conventions followed             │
+└─────────────────────────────────────────────────────────────┘
+
+Overall: ⚠️ 3 Warnings, 0 Errors
+
+⚠️  Warnings:
+1. [Consistency] UC-03 in Phase 2 not defined in OVERVIEW Use Cases
+2. [Consistency] Endpoint /api/users/{id} missing in Phase 1 but referenced
+3. [Coverage] Risk "Database migration" (Critical) has no rollback script
+
+💡 Recommendations:
+- Add UC-03 definition to OVERVIEW Use Cases section
+- Include /api/users/{id} endpoint in Phase 1 Interface Details
+- Add rollback script to Phase 1 Pre-Implementation Checklist
+```
+
+### Validation Check Rules
+
+| Category | Check | Severity |
+|----------|-------|----------|
+| Completeness | Feature name defined | Error |
+| Completeness | Core goal specified | Error |
+| Completeness | At least one use case | Error |
+| Completeness | Architecture selected | Error |
+| Consistency | Use cases match across docs | Error |
+| Consistency | API endpoints consistent | Warning |
+| Consistency | Error codes mapped | Warning |
+| Dependency | No circular dependencies | Error |
+| Dependency | Phase 1 no internal deps | Error |
+| Coverage | Critical risks have mitigation | Warning |
+| Coverage | API endpoints have error handling | Warning |
+| Quality | Naming conventions | Info |
+| Quality | File structure matches arch | Info |
+
+### User Decision After Validation
+
+```json
+{
+  "questions": [{
+    "header": "Validation",
+    "question": "Validation complete with {N} warnings. How to proceed?",
+    "multiSelect": false,
+    "options": [
+      {"label": "Proceed to preview", "description": "Warnings will appear in document previews"},
+      {"label": "Fix warnings first", "description": "Address issues before preview"},
+      {"label": "Ignore warnings", "description": "Mark as accepted and proceed"}
+    ]
+  }]
+}
+```
+
+### Error Handling
+
+If errors found, must resolve before proceeding:
+
+```
+❌ Validation Failed - {N} Errors
+
+1. [Completeness] No use cases defined
+   → Return to Step 5 to define use cases
+
+2. [Dependency] Circular: Phase 2 → Phase 3 → Phase 2
+   → Restructure phases in Step 6
+
+[Fix issues] [Override (not recommended)]
+```
+
+### Preview Integration
+
+Warnings appear in each document preview:
+
+```
+📋 Document Preview: 01_FOUNDATION.md
+
+⚠️ Warnings:
+- UC-03 referenced but not defined
+- Missing error handling for /api/users
+
+───────────────────────────────────
+(document content)
+───────────────────────────────────
+
+[Approve] [Fix warnings] [Skip]
+```
+
+---
+
 ## Special Behaviors
 
 ### When "Other" selected then "redo previous question" entered

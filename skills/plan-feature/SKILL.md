@@ -58,6 +58,8 @@ paths:
        ↓
 7. Details (Optional)     → Priority, Scheduling
        ↓
+7.5 Validation            → Verify completeness & consistency
+       ↓
 8. Preview & Confirm      → Show each file preview, allow edits
        ↓
 9. Generate Documents     → Write confirmed docs
@@ -552,6 +554,164 @@ Total estimated phases: {N}
 - Ask user to describe desired phases
 - Validate dependencies
 - Generate based on user input
+
+## Validation (Step 7.5)
+
+Verify completeness and consistency of collected information before generating documents.
+
+### Validation Categories
+
+| Category | Description | Severity |
+|----------|-------------|----------|
+| Completeness | Required sections filled | Error |
+| Consistency | Cross-reference matching | Error |
+| Dependency | Phase ordering valid | Error |
+| Coverage | Risk/Error handling complete | Warning |
+| Quality | Best practices followed | Info |
+
+### Validation Rules
+
+```
+1. Completeness Checks
+   ✓ Feature name defined
+   ✓ Core goal specified
+   ✓ At least one use case defined
+   ✓ Architecture selected
+   ✓ Phase structure confirmed
+   ✓ Risk assessment for high-risk phases
+
+2. Consistency Checks
+   ✓ Use cases in OVERVIEW match Phase documents
+   ✓ API endpoints consistent across documents
+   ✓ Error codes defined in OVERVIEW used in Phases
+   ✓ Dependencies reference existing phases
+   ✓ Architecture patterns applied consistently
+
+3. Dependency Checks
+   ✓ No circular phase dependencies
+   ✓ Phase 1 has no internal dependencies
+   ✓ All referenced phases exist
+   ✓ External dependencies documented
+
+4. Coverage Checks
+   ✓ Critical/High risks have mitigations
+   ✓ All API endpoints have error handling
+   ✓ Security requirements addressed
+   ✓ Rollback plans for risky phases
+
+5. Quality Checks
+   ✓ Naming conventions followed
+   ✓ File structure matches architecture
+   ✓ No duplicate functionality across phases
+```
+
+### Validation Output Format
+
+```
+🔍 Validation Results
+
+┌─────────────────────────────────────────────────────────────┐
+│ Category        │ Status │ Issues                           │
+├─────────────────────────────────────────────────────────────┤
+│ Completeness    │ ✅ Pass │ All required fields present      │
+│ Consistency     │ ⚠️ Warn │ 2 issues found                   │
+│ Dependency      │ ✅ Pass │ Phase order valid                │
+│ Coverage        │ ⚠️ Warn │ 1 issue found                    │
+│ Quality         │ ✅ Pass │ Conventions followed             │
+└─────────────────────────────────────────────────────────────┘
+
+Overall: ⚠️ 3 Warnings, 0 Errors
+
+⚠️  Warnings:
+1. [Consistency] UC-03 in Phase 2 not defined in OVERVIEW Use Cases
+2. [Consistency] Endpoint /api/users/{id} missing in Phase 1 but referenced in Phase 2
+3. [Coverage] Risk "Database migration" (Critical) has no rollback script prepared
+
+💡 Recommendations:
+- Add UC-03 definition to OVERVIEW Use Cases section
+- Include /api/users/{id} endpoint in Phase 1 Interface Details
+- Add rollback script preparation to Phase 1 Pre-Implementation Checklist
+
+Proceed to Preview? (Warnings will be shown in document previews)
+```
+
+### Severity Levels
+
+| Level | Symbol | Action |
+|-------|--------|--------|
+| Error | ❌ | Must fix before proceeding |
+| Warning | ⚠️ | Recommended to fix, can proceed |
+| Info | ℹ️ | Suggestion for improvement |
+
+### Error Handling
+
+**If Errors Found:**
+```
+❌ Validation Failed - 2 Errors Found
+
+Errors must be resolved before proceeding:
+
+1. [Completeness] No use cases defined
+   → Go back to Step 5 and define at least one use case
+
+2. [Dependency] Circular dependency: Phase 2 → Phase 3 → Phase 2
+   → Restructure phases to remove circular reference
+
+Options:
+- [Fix issues] Return to relevant step
+- [Override] Proceed anyway (not recommended)
+```
+
+**If Warnings Only:**
+```
+⚠️ Validation Passed with Warnings
+
+3 warnings found. You can:
+- [Fix now] Address warnings before preview
+- [Proceed] Continue to preview (warnings shown in documents)
+- [Ignore] Mark warnings as accepted
+```
+
+### Validation Integration with Preview
+
+Warnings appear in document previews:
+
+```
+📋 Document Preview: 01_FOUNDATION.md
+
+⚠️ Validation Warnings for this document:
+- UC-03 referenced but not defined in OVERVIEW
+- Endpoint /api/users/{id} not included
+
+─────────────────────────────────────────────
+# Phase 1: Foundation
+...
+(document content)
+...
+─────────────────────────────────────────────
+
+[Approve] [Fix warnings] [Skip]
+```
+
+### Auto-Fix Suggestions
+
+For common issues, provide auto-fix options:
+
+| Issue | Auto-Fix |
+|-------|----------|
+| Missing use case reference | Add to OVERVIEW Use Cases |
+| Missing error code | Generate standard error code |
+| Missing rollback plan | Add template rollback section |
+| Naming inconsistency | Rename to match convention |
+
+```
+💡 Auto-Fix Available
+
+Issue: UC-03 not defined in OVERVIEW
+Suggested fix: Add "UC-03: {Phase 2 use case description}" to OVERVIEW
+
+[Apply fix] [Fix manually] [Ignore]
+```
 
 ## Output
 
