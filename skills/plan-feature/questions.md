@@ -9,6 +9,60 @@ Question format for interactive requirements gathering.
 
 ---
 
+## Step 0: Session Check
+
+Before starting, check for existing session state.
+
+### Check Logic
+
+```
+1. Check if .plan-feature/{feature_name}/state.md exists
+2. If exists → Show resume prompt
+3. If not exists → Proceed to Step 1
+```
+
+### Resume Prompt Display
+
+```
+📋 Found Existing Session
+
+Feature: {feature_name}
+Progress: Step {N} of 9 ({step_name})
+Last Updated: {timestamp}
+
+Previous session context:
+- {decision_1}
+- {decision_2}
+- {preference_1}
+```
+
+### Question: Session Resume
+
+```json
+{
+  "questions": [{
+    "header": "Session",
+    "question": "Found existing session for '{feature_name}'. How would you like to proceed?",
+    "multiSelect": false,
+    "options": [
+      {"label": "Resume", "description": "Continue from Step {N} ({step_name})"},
+      {"label": "Start fresh", "description": "Delete existing state and start over"},
+      {"label": "View state", "description": "Show full state before deciding"}
+    ]
+  }]
+}
+```
+
+### Behavior by Selection
+
+| Selection | Action |
+|-----------|--------|
+| Resume | Load state.md, jump to current step |
+| Start fresh | Delete .plan-feature/{feature_name}/, start Step 1 |
+| View state | Display full state.md content, ask again |
+
+---
+
 ## Step 1: Check Configuration
 
 Read `config.yaml` from the skill folder:
@@ -416,6 +470,89 @@ Continue with functional design questions?
 - Security: {security_requirements}
 
 Proceeding to implementation pattern selection...
+```
+
+---
+
+## Step 5.5a: Feature Size Assessment
+
+After collecting functional design, automatically assess feature size.
+
+### Size Calculation
+
+```
+score = (use_cases × 2) + (integrations × 3) + (risk_level × 2)
+
+Thresholds:
+- score < 15: Normal → Continue to Step 5.5
+- score 15-25: Large → Show warning, ask user
+- score > 25: Too Large → Recommend decomposition
+```
+
+### Large Feature Warning Display
+
+```
+⚠️ Feature Size Assessment
+
+This feature appears large:
+- Use cases: {count}
+- Estimated phases: {count}
+- Integrations: {count}
+- Risk level: {level}
+
+Recommendations:
+1. Split into sub-features:
+   ├── {feature_name}-core (Use cases 1-4)
+   ├── {feature_name}-integration (Use cases 5-8)
+   └── {feature_name}-advanced (Use cases 9-12)
+
+2. Or continue with session splitting:
+   → Complete design in multiple sessions
+   → Use --continue to resume
+```
+
+### Question: Feature Size Decision
+
+```json
+{
+  "questions": [{
+    "header": "Size",
+    "question": "This feature is large ({score} score). How would you like to proceed?",
+    "multiSelect": false,
+    "options": [
+      {"label": "Split feature", "description": "Decompose into smaller features"},
+      {"label": "Continue", "description": "Proceed with current scope (use sessions)"},
+      {"label": "Simplify", "description": "Reduce scope by removing use cases"},
+      {"label": "Generate design docs", "description": "Start design with current info"}
+    ]
+  }]
+}
+```
+
+### Follow-up: Split Feature
+
+If "Split feature" selected:
+- Show suggested sub-features with use case groupings
+- Ask which sub-feature to design first
+- Create separate plan-feature sessions for each
+
+### Follow-up: Simplify
+
+If "Simplify" selected:
+```json
+{
+  "questions": [{
+    "header": "Reduce",
+    "question": "Which use cases should be removed or deferred?",
+    "multiSelect": true,
+    "options": [
+      {"label": "UC-{N}: {name}", "description": "Remove from current scope"},
+      {"label": "UC-{N}: {name}", "description": "Remove from current scope"},
+      {"label": "UC-{N}: {name}", "description": "Remove from current scope"},
+      {"label": "Keep all", "description": "Don't remove any use cases"}
+    ]
+  }]
+}
 ```
 
 ---
