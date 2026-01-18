@@ -883,22 +883,6 @@ Key decisions and user preferences from conversation:
 | Load | Session start | Read state, resume from current step |
 | Archive | Generation complete | Move to completed/ folder |
 
-### Session Start Logic
-
-```
-1. Check for existing state
-   → .plan-feature/{feature_name}/state.md exists?
-
-2. If exists:
-   → "Found existing session for {feature_name}"
-   → "Current step: {step}"
-   → "Resume or start fresh?"
-
-3. If not exists:
-   → Create new state file
-   → Start from Step 1
-```
-
 ### Interim Summary Integration
 
 After each summary checkpoint:
@@ -995,21 +979,31 @@ Support multi-session design for large features.
 /plan-feature payment-system --abandon
 ```
 
-### --continue Behavior
+### Session Start Logic
 
 ```
-1. Load state.md
-2. Display progress summary:
-   "Resuming: payment-system
-    Completed: Steps 1-4
-    Current: Step 5 (Functional Design)
+1. Check for existing state
+   → .plan-feature/{feature_name}/state.md exists?
 
-    Last session context:
-    - Discussed OAuth integration
-    - Decided on PostgreSQL storage
-    - User prefers detailed error messages"
+2. If exists (or --continue flag):
+   → Load state.md
+   → Display progress summary:
+     "Resuming: payment-system
+      Completed: Steps 1-4
+      Current: Step 5 (Functional Design)
 
-3. Resume from current step
+      Last session context:
+      - Discussed OAuth integration
+      - Decided on PostgreSQL storage
+      - User prefers detailed error messages"
+   → Ask: "Resume or start fresh?"
+   → If resume: Jump to current step
+   → If fresh: Delete state, start from Step 1
+
+3. If not exists:
+   → Create new state file
+   → Start from Step 1
+
 4. Load relevant interim summary if available
 ```
 
