@@ -287,132 +287,16 @@ Continue with more questions?
 
 ---
 
-## Step 4.5: Alternative Architecture Proposal
-
-Based on codebase analysis and requirements, propose architecture options.
-
-### Architecture Analysis Output
-
-```
-🏗️  Architecture Options
-
-Based on your requirements ({use_cases} use cases, {integrations} integrations, {storage} storage):
-
-┌─────────────────────────────────────────────────────────────┐
-│ Option A: {Layered Architecture} (Recommended)              │
-│ Follow existing project patterns                            │
-├─────────────────────────────────────────────────────────────┤
-│ ✅ Pros                      │ ⚠️  Cons                      │
-│ • Consistent with codebase   │ • Limited scalability         │
-│ • Lower learning curve       │ • Tighter coupling            │
-│ • Faster implementation      │ •                             │
-├─────────────────────────────────────────────────────────────┤
-│ Effort: Low | Risk: Low | Scalability: Medium               │
-│ Best for: Simple features, tight deadlines                  │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│ Option B: {Clean Architecture}                              │
-│ Separate domain from infrastructure                         │
-├─────────────────────────────────────────────────────────────┤
-│ ✅ Pros                      │ ⚠️  Cons                      │
-│ • Better testability         │ • More boilerplate            │
-│ • Clear boundaries           │ • Deviates from existing      │
-│ • Easier maintenance         │ • Steeper learning curve      │
-├─────────────────────────────────────────────────────────────┤
-│ Effort: Medium | Risk: Medium | Scalability: High           │
-│ Best for: Complex domains, long-term maintenance            │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│ Option C: {Event-Driven}                                    │
-│ Async processing with event bus                             │
-├─────────────────────────────────────────────────────────────┤
-│ ✅ Pros                      │ ⚠️  Cons                      │
-│ • Highly scalable            │ • Highest complexity          │
-│ • Loose coupling             │ • Debugging difficulty        │
-│ • Better resilience          │ • Eventual consistency        │
-├─────────────────────────────────────────────────────────────┤
-│ Effort: High | Risk: High | Scalability: Very High          │
-│ Best for: High throughput, distributed systems              │
-└─────────────────────────────────────────────────────────────┘
-
-💡 Recommendation: Option A
-   Reason: Best balance of consistency with existing codebase and implementation speed
-```
-
-### Question 6: Architecture Selection
-
-```json
-{
-  "questions": [{
-    "header": "Architecture",
-    "question": "Which architecture approach would you like to use?",
-    "multiSelect": false,
-    "options": [
-      {"label": "Option A (Recommended)", "description": "{Pattern name} - follows existing patterns"},
-      {"label": "Option B", "description": "{Pattern name} - better separation"},
-      {"label": "Option C", "description": "{Pattern name} - maximum scalability"},
-      {"label": "Generate design docs", "description": "Start design with current info"}
-    ]
-  }]
-}
-```
-
-### Follow-up: Custom Architecture
-
-If user selects "Other":
-
-```
-Please describe your preferred architecture approach.
-
-Consider specifying:
-- Layer structure (e.g., controller → service → repository)
-- Key patterns (e.g., Repository, Factory, Observer)
-- Module boundaries (e.g., separate by feature or layer)
-- Data flow (e.g., sync/async, event-driven)
-
-I'll incorporate your approach into the design documents.
-```
-
-### Architecture Impact Summary
-
-After selection, display impact:
-
-```
-✅ Architecture Selected: {Option name}
-
-📁 Recommended Structure:
-{source_path}/
-├── {layer1}/          ← {description}
-│   └── {feature}/
-├── {layer2}/          ← {description}
-│   └── {feature}/
-└── {layer3}/          ← {description}
-    └── {feature}/
-
-🔗 Key Patterns to Follow:
-- {Pattern 1}: {where to use}
-- {Pattern 2}: {where to use}
-- {Pattern 3}: {where to use}
-
-⚠️  Trade-offs Accepted:
-- {Trade-off 1}
-- {Trade-off 2}
-```
-
----
-
 ## Interim Summary 2
 
 ```
 📋 Information collected so far:
 - Feature name: {feature_name}
 - Core goal: {goal}
+- Architecture: {detected_architecture} (from codebase)
 - Integration: {systems}
 - Storage: {storage}
 - API: {api}
-- Architecture: {selected_architecture}
 
 Continue with functional design questions?
 ```
@@ -531,7 +415,131 @@ Continue with functional design questions?
 - Error handling: {error_strategy}
 - Security: {security_requirements}
 
-Analyzing requirements to propose phase structure...
+Proceeding to implementation pattern selection...
+```
+
+---
+
+## Step 5.5: Implementation Pattern Selection
+
+Based on architecture (from Step 3) and functional requirements (from Step 5), propose implementation patterns.
+
+### Pattern Analysis Output
+
+```
+🔧 Implementation Pattern Selection
+
+Architecture: {detected_architecture} (from codebase analysis)
+
+Requirements Summary:
+- Use cases: {N} defined ({types})
+- Expected volume: {estimated_volume}
+- Integrations: {integration_list}
+- Processing: {sync/async needs}
+
+Select an implementation pattern for this feature:
+
+┌─────────────────────────────────────────────────────────────┐
+│ Option A: Synchronous Processing (Recommended)              │
+│ Standard request-response within {detected_architecture}   │
+├─────────────────────────────────────────────────────────────┤
+│ ✅ Pros                      │ ⚠️  Cons                      │
+│ • Simple implementation      │ • Blocks during processing   │
+│ • Easy debugging             │ • Limited throughput         │
+│ • Follows existing patterns  │ • No automatic retry         │
+├─────────────────────────────────────────────────────────────┤
+│ Effort: Low | Risk: Low | Throughput: ~1K/min              │
+│ Best for: Simple CRUD, low volume, immediate response      │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│ Option B: Async with Worker Pool                            │
+│ Background processing with in-process worker pool          │
+├─────────────────────────────────────────────────────────────┤
+│ ✅ Pros                      │ ⚠️  Cons                      │
+│ • Fast API response          │ • Job loss on restart        │
+│ • Better throughput          │ • Harder to debug            │
+│ • No external dependencies   │ • Limited horizontal scale   │
+├─────────────────────────────────────────────────────────────┤
+│ Effort: Medium | Risk: Medium | Throughput: ~10K/min       │
+│ Best for: Medium volume, single instance, tolerable loss   │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│ Option C: Message Queue Integration                         │
+│ External queue for reliable async processing               │
+├─────────────────────────────────────────────────────────────┤
+│ ✅ Pros                      │ ⚠️  Cons                      │
+│ • Reliable delivery          │ • Infrastructure required    │
+│ • Auto retry on failure      │ • Higher complexity          │
+│ • Horizontal scaling         │ • Eventual consistency       │
+├─────────────────────────────────────────────────────────────┤
+│ Effort: High | Risk: Medium | Throughput: ~100K/min        │
+│ Best for: High volume, reliability critical, distributed   │
+└─────────────────────────────────────────────────────────────┘
+
+💡 Recommendation: Option {X}
+   Reason: {Based on volume/requirements analysis}
+```
+
+### Question 12: Implementation Pattern Selection
+
+```json
+{
+  "questions": [{
+    "header": "Pattern",
+    "question": "Which implementation pattern suits this feature?",
+    "multiSelect": false,
+    "options": [
+      {"label": "Option A (Recommended)", "description": "Synchronous - simple, follows existing patterns"},
+      {"label": "Option B", "description": "Async Worker - better throughput, in-process"},
+      {"label": "Option C", "description": "Message Queue - reliable, scalable"},
+      {"label": "Generate design docs", "description": "Start design with current info"}
+    ]
+  }]
+}
+```
+
+### Follow-up: Custom Pattern
+
+If user selects "Other":
+
+```
+Please describe your preferred implementation pattern.
+
+Consider specifying:
+- Processing model (sync/async/event-driven)
+- Worker mechanism (goroutine pool, thread pool, external queue)
+- Retry strategy (none, immediate, exponential backoff)
+- Data flow (request-response, fire-and-forget, pub-sub)
+
+I'll incorporate your approach into the design documents.
+```
+
+### Pattern Selection Summary
+
+After selection, display:
+
+```
+✅ Implementation Pattern Selected: {Option name}
+
+Architecture: {detected_architecture} (unchanged)
+Pattern: {selected_pattern}
+
+📁 Component Structure:
+{source_path}/{feature}/
+├── {standard_components}     ← From {detected_architecture}
+└── {additional_components}   ← From {selected_pattern}
+
+🔧 Additional Components:
+{If Option B: worker_pool.go, job.go}
+{If Option C: queue.go, consumer.go, producer.go}
+
+⚠️  Trade-offs Accepted:
+- {Trade-off 1}
+- {Trade-off 2}
+
+Proceeding to phase proposal with this pattern...
 ```
 
 ---

@@ -38,19 +38,19 @@ paths:
        ↓
 2. Basic Info (Required)  → Feature name, Core goal
        ↓
-3. Codebase Analysis      → Explore related modules
+3. Codebase Analysis      → Explore related modules, detect architecture
        ↓
    📋 Interim Summary 1
        ↓
 4. Architecture Q&A       → Integration, Storage, API
-       ↓
-4.5 Alternative Architecture → Propose & compare architecture options
        ↓
    📋 Interim Summary 2
        ↓
 5. Functional Design      → Use cases, Interface spec, Error handling
        ↓
    📋 Interim Summary 3
+       ↓
+5.5 Implementation Pattern → Select implementation approach
        ↓
 6. Auto Phase Proposal    → Analyze & suggest phase structure
        ↓
@@ -79,11 +79,11 @@ paths:
 | 4 | System integration (multiSelect) | O |
 | 4 | Data storage | O |
 | 4 | API requirement | O |
-| 4.5 | Architecture option selection | O |
 | 5 | Core use cases (multiSelect) | O |
 | 5 | Interface specification | O |
 | 5 | Error handling strategy | O |
 | 5 | Security/Validation | - |
+| 5.5 | Implementation pattern selection | O |
 | 6 | Phase proposal confirmation | O |
 | 7 | Priority | - |
 | 7 | Scheduling | - |
@@ -188,158 +188,164 @@ Analysis results feed into Auto Phase Proposal:
 - Dependencies → Inform phase ordering
 - Complexity → Adjust difficulty estimates
 
-## Alternative Architecture (Step 4.5)
+## Implementation Pattern Selection (Step 5.5)
 
-Propose multiple architecture options based on requirements and let user choose.
+Select implementation approach within the detected architecture based on functional requirements.
 
-### When to Propose Alternatives
+### Purpose
 
-| Condition | Trigger |
-|-----------|---------|
-| Multiple valid patterns | Detected architecture allows variations |
-| Complex integration | 3+ system integrations selected |
-| Scalability concern | High traffic/data volume expected |
-| New technology | Unfamiliar tech stack mentioned |
-| Trade-off decision | Clear pros/cons between approaches |
+- Architecture is **fixed** (detected from codebase in Step 3)
+- This step selects **implementation pattern** within that architecture
+- Pattern choice depends on use cases and requirements from Step 5
 
-### Architecture Option Generation
+### When This Step Runs
+
+| Condition | Action |
+|-----------|--------|
+| Always | Propose implementation patterns after functional design |
+| Architecture detected | Apply patterns within detected architecture |
+| No architecture detected | Use patterns as foundation for new structure |
+
+### Pattern Selection Process
 
 ```
-1. Analyze Requirements
-   - Feature complexity (use cases, integrations)
-   - Non-functional requirements (scalability, maintainability)
-   - Existing codebase patterns
-   - Team familiarity (inferred from codebase)
+1. Analyze Requirements (from Steps 3-5)
+   - Detected architecture (Step 3)
+   - Technical requirements (Step 4: integrations, storage, API)
+   - Functional requirements (Step 5: use cases, volume, complexity)
 
-2. Generate Options
-   - Option A: Conservative (follow existing patterns)
-   - Option B: Optimized (best fit for requirements)
-   - Option C: Future-proof (scalable, extensible)
+2. Generate Pattern Options
+   - Option A: Simple/Standard (follow existing patterns)
+   - Option B: Enhanced (add async/worker components)
+   - Option C: Advanced (add queue/event system)
 
 3. Evaluate Each Option
-   - Pros/Cons analysis
-   - Risk assessment
-   - Effort estimation (relative)
-   - Long-term implications
+   - Suitability for use cases
+   - Alignment with existing codebase
+   - Complexity vs benefit trade-off
 ```
 
-### Comparison Criteria
-
-| Criteria | Weight | Description |
-|----------|--------|-------------|
-| Consistency | High | Alignment with existing codebase |
-| Complexity | High | Implementation and maintenance effort |
-| Scalability | Medium | Growth and performance capacity |
-| Flexibility | Medium | Ease of future changes |
-| Risk | Medium | Implementation and integration risks |
-| Team Fit | Low | Team's familiarity with approach |
-
-### Option Output Format
+### Pattern Output Format
 
 ```
-🏗️  Architecture Options
+🔧 Implementation Pattern Selection
 
-Based on your requirements, here are {N} architecture approaches:
+Architecture: {Detected Architecture} (from codebase)
+
+Based on your requirements:
+- Use cases: {N} defined
+- Expected volume: {volume}
+- Integration: {integrations}
+
+Select an implementation pattern:
 
 ┌─────────────────────────────────────────────────────────────┐
-│ Option A: {Name} (Recommended)                              │
-│ Approach: {Brief description}                               │
+│ Option A: Synchronous Processing (Recommended)              │
+│ Standard request-response within existing architecture      │
 ├─────────────────────────────────────────────────────────────┤
 │ ✅ Pros                      │ ⚠️  Cons                      │
-│ • {Consistent with codebase} │ • {Limited scalability}       │
-│ • {Lower complexity}         │ • {May need refactor later}   │
-│ • {Faster implementation}    │ •                             │
+│ • Simple implementation      │ • Blocks during processing   │
+│ • Easy debugging             │ • Limited throughput         │
+│ • Follows existing patterns  │ • No retry mechanism         │
 ├─────────────────────────────────────────────────────────────┤
-│ Effort: Low-Medium | Risk: Low | Scalability: Medium        │
+│ Effort: Low | Risk: Low | Throughput: ~1K/min              │
+│ Best for: Simple CRUD, low volume, immediate response      │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│ Option B: {Name}                                            │
-│ Approach: {Brief description}                               │
+│ Option B: Async with Worker Pool                            │
+│ Background processing with goroutine/thread pool           │
 ├─────────────────────────────────────────────────────────────┤
 │ ✅ Pros                      │ ⚠️  Cons                      │
-│ • {Better scalability}       │ • {Higher initial complexity} │
-│ • {Cleaner separation}       │ • {Deviates from current}     │
-│ • {Easier testing}           │ • {Longer implementation}     │
+│ • Fast API response          │ • Job loss on restart        │
+│ • Better throughput          │ • Harder to debug            │
+│ • No external dependencies   │ • Limited scale-out          │
 ├─────────────────────────────────────────────────────────────┤
-│ Effort: Medium-High | Risk: Medium | Scalability: High      │
+│ Effort: Medium | Risk: Medium | Throughput: ~10K/min       │
+│ Best for: Medium volume, single instance, tolerable loss   │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│ Option C: {Name}                                            │
-│ Approach: {Brief description}                               │
+│ Option C: Message Queue Integration                         │
+│ External queue for reliable async processing               │
 ├─────────────────────────────────────────────────────────────┤
 │ ✅ Pros                      │ ⚠️  Cons                      │
-│ • {Maximum flexibility}      │ • {Highest complexity}        │
-│ • {Future-proof design}      │ • {Over-engineering risk}     │
-│ • {Best practices}           │ • {Steeper learning curve}    │
+│ • Reliable delivery          │ • Infrastructure required    │
+│ • Auto retry on failure      │ • Higher complexity          │
+│ • Horizontal scaling         │ • Eventual consistency       │
 ├─────────────────────────────────────────────────────────────┤
-│ Effort: High | Risk: Medium-High | Scalability: Very High   │
+│ Effort: High | Risk: Medium | Throughput: ~100K/min        │
+│ Best for: High volume, reliability critical, distributed   │
 └─────────────────────────────────────────────────────────────┘
 
-💡 Recommendation: Option A
-   Reason: {Best balance of consistency and requirements}
+💡 Recommendation: Option B
+   Reason: Matches expected volume (10K/day), no external dependencies needed
 ```
 
-### Common Architecture Patterns
+### Common Implementation Patterns
 
-| Pattern | Best For | Trade-offs |
-|---------|----------|------------|
-| Layered | Simple CRUD, small teams | Easy but can become monolithic |
-| Clean/Hexagonal | Complex domains, testability | More boilerplate, steeper curve |
-| Microservices | High scale, team autonomy | Operational complexity |
-| Event-driven | Async workflows, decoupling | Debugging complexity |
-| CQRS | Read/write asymmetry | Eventual consistency |
-| Modular Monolith | Growing projects | Balance of simplicity/modularity |
+| Pattern | Architecture | Use Case |
+|---------|--------------|----------|
+| Standard CRUD | Any | Simple data operations |
+| Service + Worker | Layered/Clean | Background processing |
+| Domain Event | Clean/DDD | Decoupled side-effects |
+| Outbox Pattern | Any | Transactional messaging |
+| Saga Pattern | Any | Distributed transactions |
+| CQRS | Clean/DDD | Read/write separation |
 
 ### User Selection Flow
 
 ```json
 {
   "questions": [{
-    "header": "Architecture",
-    "question": "Which architecture approach would you like to use?",
+    "header": "Pattern",
+    "question": "Which implementation pattern suits this feature?",
     "multiSelect": false,
     "options": [
-      {"label": "Option A (Recommended)", "description": "{Conservative approach following existing patterns}"},
-      {"label": "Option B", "description": "{Optimized for scalability with moderate changes}"},
-      {"label": "Option C", "description": "{Future-proof with significant restructuring}"},
-      {"label": "Custom approach", "description": "Describe your preferred architecture"}
+      {"label": "Option A (Recommended)", "description": "Synchronous - simple and follows existing patterns"},
+      {"label": "Option B", "description": "Async Worker - better throughput, in-process"},
+      {"label": "Option C", "description": "Message Queue - reliable, scalable, external dependency"},
+      {"label": "Custom", "description": "Describe your preferred approach"}
     ]
   }]
 }
 ```
 
-### Impact on Phase Proposal
+### Impact on Phase Proposal & Documents
 
-Selected architecture affects phase structure:
+Selected pattern affects:
 
-| Selection | Phase Impact |
-|-----------|--------------|
-| Conservative | Fewer phases, follow existing structure |
-| Optimized | May need infrastructure phase first |
-| Future-proof | Additional phases for patterns/abstractions |
-| Custom | Adjust based on user description |
+| Affected Area | Impact |
+|---------------|--------|
+| Phase structure | Additional components may add phases |
+| File structure | New files for workers/queues/events |
+| Risk analysis | Pattern-specific risks identified |
+| Testing strategy | Different test approaches needed |
 
-### Architecture Decision Record (ADR)
+### Pattern Decision Record
 
-For selected architecture, generate ADR in OVERVIEW:
+For selected pattern, record in OVERVIEW:
 
 ```markdown
-## Architecture Decision
+## Implementation Pattern
 
-**Selected**: {Option name}
+**Architecture**: {Detected from codebase}
+**Selected Pattern**: {Option name}
 **Alternatives Considered**: {Other options}
-**Decision Rationale**: {Why this option}
 
-### Key Trade-offs Accepted
+### Decision Rationale
+{Why this pattern for this feature}
+
+### Component Structure
+```
+{source_path}/{feature}/
+├── {standard components from architecture}
+└── {additional components from pattern}
+```
+
+### Trade-offs Accepted
 - {Trade-off 1}: {Accepted because...}
 - {Trade-off 2}: {Mitigated by...}
-
-### Constraints
-- Must integrate with existing {system}
-- Should follow {pattern} conventions
-- Limited by {constraint}
 ```
 
 ## Risk Analysis

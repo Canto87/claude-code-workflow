@@ -19,55 +19,48 @@ Overview file for design documents.
 {ASCII diagram}
 ```
 
-## Architecture Decision
+## Implementation Pattern
 
-**Selected Approach**: {Option name} - {Pattern name}
+**Architecture**: {detected_architecture} (from codebase)
+**Selected Pattern**: {Option name} - {Pattern description}
 
 **Alternatives Considered**:
 | Option | Pattern | Why Not Selected |
 |--------|---------|------------------|
-| {Option B} | {Pattern} | {Reason - e.g., "Over-engineering for current scope"} |
-| {Option C} | {Pattern} | {Reason - e.g., "Team unfamiliar with pattern"} |
+| {Option B} | {Async Worker} | {Reason - e.g., "Job loss risk unacceptable"} |
+| {Option C} | {Message Queue} | {Reason - e.g., "Infrastructure overhead for current scale"} |
 
 **Decision Rationale**:
-{Why this architecture was chosen - e.g., "Best balance of consistency with existing codebase and implementation speed. Allows future migration to more complex patterns if needed."}
+{Why this pattern was chosen - e.g., "Matches expected volume of 10K/day. No external dependencies needed. Can migrate to queue-based approach if volume increases."}
 
 ### Key Trade-offs Accepted
 
 | Trade-off | Impact | Mitigation |
 |-----------|--------|------------|
-| {Limited scalability} | {Medium} | {Can refactor to Option B if load increases} |
-| {Tighter coupling} | {Low} | {Use interfaces at boundaries} |
+| {Processing blocks response} | {Medium} | {Keep processing time under 100ms} |
+| {No automatic retry} | {Low} | {Implement manual retry in error handler} |
 
-### Architecture Constraints
-
-- Must integrate with existing {system/component}
-- Should follow {pattern} conventions used in project
-- Limited by {constraint - e.g., "current team expertise"}
-
-### Recommended Structure
+### Component Structure
 
 ```
-{source_path}/
-├── {layer1}/              ← {description}
-│   └── {feature}/
-│       ├── {file1}.{ext}  ← {component description}
-│       └── {file2}.{ext}  ← {component description}
-├── {layer2}/              ← {description}
-│   └── {feature}/
-│       └── {file}.{ext}   ← {component description}
-└── {layer3}/              ← {description}
-    └── {feature}/
-        └── {file}.{ext}   ← {component description}
+{source_path}/{feature}/
+├── {standard_layer}/          ← From {detected_architecture}
+│   ├── {handler}.{ext}        ← API endpoint
+│   ├── {service}.{ext}        ← Business logic
+│   └── {repository}.{ext}     ← Data access
+└── {pattern_specific}/        ← From {selected_pattern}
+    ├── {worker}.{ext}         ← (if async pattern)
+    └── {queue}.{ext}          ← (if queue pattern)
 ```
 
-### Key Patterns to Follow
+### Patterns Applied
 
-| Pattern | Where to Use | Example |
-|---------|--------------|---------|
-| {Repository} | {Data access layer} | `{feature}Repository` |
-| {Service} | {Business logic} | `{feature}Service` |
-| {Handler/Controller} | {API layer} | `{feature}Handler` |
+| Pattern | Layer | Purpose | Example |
+|---------|-------|---------|---------|
+| {Repository} | Data | Data access abstraction | `{feature}Repository` |
+| {Service} | Business | Business logic orchestration | `{feature}Service` |
+| {Handler} | API | HTTP endpoint handling | `{feature}Handler` |
+| {Worker} | Processing | Background job execution | `{feature}Worker` |
 
 ## Use Cases
 
