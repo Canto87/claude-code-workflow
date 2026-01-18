@@ -34,6 +34,8 @@ paths:
 ## Execution Flow
 
 ```
+0. Session Check          → Check existing state, resume or fresh start
+       ↓
 1. Check Config           → Read config.yaml (use defaults if missing)
        ↓
 2. Basic Info (Required)  → Feature name, Core goal
@@ -49,6 +51,8 @@ paths:
 5. Functional Design      → Use cases, Interface spec, Error handling
        ↓
    📋 Interim Summary 3
+       ↓
+5.5a Feature Size Check   → Assess size, suggest split if large
        ↓
 5.5 Implementation Pattern → Select implementation approach
        ↓
@@ -74,6 +78,7 @@ paths:
 
 | Step | Question | Required |
 |------|----------|----------|
+| 0 | Session resume (if exists) | O |
 | 2 | Feature name confirmation | O |
 | 2 | Core goal | O |
 | 4 | System integration (multiSelect) | O |
@@ -83,10 +88,12 @@ paths:
 | 5 | Interface specification | O |
 | 5 | Error handling strategy | O |
 | 5 | Security/Validation | - |
+| 5.5a | Feature size decision (if large) | O |
 | 5.5 | Implementation pattern selection | O |
 | 6 | Phase proposal confirmation | O |
 | 7 | Priority | - |
 | 7 | Scheduling | - |
+| 7.5 | Validation proceed | O |
 
 ## Intelligent Codebase Analysis (Step 3)
 
