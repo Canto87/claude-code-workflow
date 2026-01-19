@@ -1,0 +1,93 @@
+# Status Skill Configuration
+# Defines how to parse and display progress
+
+paths:
+  # Where to look for feature plans
+  plans: "docs/plans"
+
+  # Checklist filename to parse
+  checklist_file: "checklist.md"
+
+parsing:
+  # Regex patterns for parsing
+  patterns:
+    # Phase header pattern
+    phase: "^## Phase \\d+:"
+
+    # Completed checkbox
+    completed: "^\\s*- \\[x\\]"
+
+    # Pending checkbox
+    pending: "^\\s*- \\[ \\]"
+
+    # Subtask header (optional nesting)
+    subtask: "^### "
+
+  # How to handle nested items
+  nesting:
+    count_subtasks: true
+    max_depth: 2
+
+display:
+  # Progress bar settings
+  progress_bar:
+    width: 20
+    filled_char: "█"
+    empty_char: "░"
+
+  # Status icons
+  icons:
+    done: "✅"
+    active: "🔄"
+    pending: "⏳"
+    blocked: "🚫"
+
+  # What to show
+  show:
+    overall_progress: true
+    phase_breakdown: true
+    current_focus: true
+    next_actions: true
+    task_details: true
+
+  # Maximum items to show in current focus
+  max_focus_items: 7
+
+  # Maximum next actions to suggest
+  max_next_actions: 3
+
+# Status determination rules
+status_rules:
+  done:
+    condition: "progress == 100"
+
+  active:
+    condition: "progress > 0 AND progress < 100"
+
+  pending:
+    condition: "progress == 0 AND has_previous_done"
+
+  blocked:
+    condition: "progress == 0 AND NOT has_previous_done AND index > 0"
+
+# Feature detection
+feature_detection:
+  # Auto-detect current feature from git branch or directory
+  auto_detect: true
+
+  # Pattern to extract feature name from branch
+  branch_pattern: "feature/(.+)"
+
+  # Fallback: look for most recently modified checklist
+  fallback: "recent"
+
+# All features overview settings
+overview:
+  # Sort order for features
+  sort_by: "last_updated"  # last_updated | progress | name
+
+  # Show features with no progress
+  show_not_started: true
+
+  # Maximum features to show
+  max_features: 10

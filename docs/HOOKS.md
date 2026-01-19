@@ -6,140 +6,122 @@ Claude Code hooks allow automatic triggering of scripts when specific events occ
 
 | Hook | Script | Description |
 |------|--------|-------------|
-| `slack-notify.sh` | Stop | Sends Slack notifications when session ends (after skills complete) |
+| `pre-commit-quality.sh` | Pre-commit | Quality checks before git commits |
 
-## Setup
+## Pre-commit Quality Hook
 
-### 1. Create Slack Incoming Webhook
+The `pre-commit-quality.sh` hook runs quality checks before each commit:
 
-1. Go to https://api.slack.com/messaging/webhooks
-2. Create a new webhook for your workspace
-3. Select the target channel
-4. Copy the webhook URL
+### Checks Performed
 
-### 2. Configure slack-notify
+| Check | Description |
+|-------|-------------|
+| Checklist completion | Warns if committing incomplete checklist items |
+| TODO/FIXME comments | Warns about TODO comments in code |
+| Secrets detection | Blocks commits with potential secrets |
+| Large files | Warns about files > 1MB |
+| Linter | Runs appropriate linter (golangci-lint, eslint, ruff) |
+| Test files | Warns if new code lacks corresponding tests |
 
-Edit `.claude/skills/slack-notify/config.yaml`:
+### Installation
 
+```bash
+# Copy to git hooks directory
+cp hooks/pre-commit-quality.sh .git/hooks/pre-commit
+
+# Make executable
+chmod +x .git/hooks/pre-commit
+```
+
+Or create a symlink:
+
+```bash
+ln -s ../../hooks/pre-commit-quality.sh .git/hooks/pre-commit
+```
+
+### Output Example
+
+```
+🔍 Running pre-commit quality checks...
+
+📋 Checking checklist completion...
+  ✓ docs/checklists/user-auth.md - all items complete
+
+📝 Checking for TODO/FIXME comments...
+  ✓ No TODO/FIXME comments found
+
+🔐 Checking for potential secrets...
+  ✓ No obvious secrets detected
+
+📦 Checking for large files...
+  ✓ No large files detected
+
+🧹 Running linter...
+  ✓ Go linter passed
+
+🧪 Checking for corresponding tests...
+  ✓ Test coverage looks good
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 Summary
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ All checks passed!
+```
+
+### Behavior
+
+- **Errors (🔴)**: Block commit, must fix
+- **Warnings (⚠️)**: Allow commit, recommend fixing
+
+## Slack Notifications
+
+**Note:** Slack notifications are now built into each skill, not using hooks.
+
+See `skills/slack-notify/SKILL.md` for configuration.
+
+Quick setup:
 ```yaml
-webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
-channel: "#your-channel"
-
-target_skills:
-  - "plan-feature"
-  - "init-impl"
-  - pattern: "*:phase*"
+# skills/slack-notify/config.yaml
+webhook_url: "https://hooks.slack.com/services/YOUR/ACTUAL/URL"
 ```
-
-### 3. Register Hook
-
-Add to your project's `.claude/settings.local.json`:
-
-```json
-{
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/slack-notify.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-Or for user-level (all projects), add to `~/.claude/settings.json`.
-
-**Note:** Stop hook triggers when the session ends, so notifications are sent after all skills complete.
-
-## Monitored Skills
-
-The `slack-notify.sh` hook monitors these skills:
-
-| Skill | Message |
-|-------|---------|
-| `plan-feature` | Feature Design Complete |
-| `init-impl` | Implementation System Ready |
-| `*:phase*` | Phase N Complete |
-
-## Message Format
-
-### plan-feature Completion
-
-```
-:clipboard: Feature Design Complete
-
-Feature planning is complete.
-
-Generated Files:
-- docs/plans/{feature}/00_OVERVIEW.md
-- Phase documents
-
-Next Step: Run `init-impl` skill
-```
-
-### init-impl Completion
-
-```
-:hammer_and_wrench: Implementation System Ready
-
-Implementation system is ready.
-
-Generated Files:
-- docs/checklists/{feature}.md
-- .claude/commands/{feature}/
-
-Next Step: Start with `/phase1` command
-```
-
-### Phase Completion
-
-```
-:white_check_mark: Phase {N} Complete
-
-Phase {N} of {feature} is complete.
-
-Next Step: Continue with `/phase{N+1}`
-```
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| No notifications | Check webhook_url in config.yaml |
-| Wrong channel | Verify channel matches webhook setup |
-| Permission denied | Run `chmod +x .claude/hooks/slack-notify.sh` |
-| Script not found | Check path in settings.local.json |
-
-## Dependencies
-
-- `jq`: JSON parsing (macOS default, install on Linux)
-- `curl`: HTTP requests (default)
 
 ## Custom Hooks
 
 To create your own hook:
 
-1. Create script in `.claude/hooks/`
-2. Make executable: `chmod +x .claude/hooks/your-script.sh`
-3. Register in `settings.local.json`
+1. Create script in `hooks/`
+2. Make executable: `chmod +x hooks/your-script.sh`
+3. Copy or link to `.git/hooks/`
 
-**Stop hook** scripts receive JSON input via stdin with:
-- `transcript_path`: Path to session transcript file
-- `cwd`: Current working directory
+### Hook Types
 
-Example:
-```bash
-#!/bin/bash
-input=$(cat)
-transcript_path=$(echo "$input" | jq -r '.transcript_path')
-# Parse transcript to find executed skills
+| Hook | When | Use Case |
+|------|------|----------|
+| pre-commit | Before commit | Validation, linting |
+| commit-msg | After message entered | Message format check |
+| pre-push | Before push | Run tests |
+| post-commit | After commit | Notifications |
+
+### Claude Code Hooks
+
+Claude Code also supports its own hooks in `.claude/settings.local.json`:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [...],
+    "PostToolUse": [...],
+    "Stop": [...]
+  }
+}
 ```
 
-## Debug Logging
+These are separate from git hooks and trigger on Claude Code events.
 
-The slack-notify.sh script logs to `/tmp/slack-notify-debug.log` for troubleshooting.
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Hook not running | Check `chmod +x` and correct path |
+| Permission denied | Run `chmod +x hooks/*.sh` |
+| Hook blocking commits | Check error message, fix issues or use `--no-verify` |
