@@ -1,7 +1,7 @@
 ---
 name: plan-feature
 description: Generate phase-based design documents for new features. Use for feature planning, roadmap creation, design documents, or "design a feature" requests.
-allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, Task
+allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, Task, Bash
 ---
 
 # Phase Document Generator
@@ -176,3 +176,41 @@ For in-depth information on specific topics, refer to:
 After design completion, initialize implementation system:
 - "{feature_name} prepare for implementation"
 - init-impl Skill auto-triggers
+
+## On Completion (Slack Notification)
+
+After successful document generation, send Slack notification if configured:
+
+1. **Check webhook configuration:**
+   ```bash
+   WEBHOOK=$(grep 'webhook_url:' skills/slack-notify/config.yaml 2>/dev/null | sed 's/.*"\(.*\)"/\1/')
+   ```
+
+2. **If webhook is configured** (not empty and doesn't contain "YOUR"):
+   ```bash
+   curl -s -X POST "$WEBHOOK" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "blocks": [
+         {"type": "header", "text": {"type": "plain_text", "text": "📋 Feature Design Complete", "emoji": true}},
+         {"type": "section", "text": {"type": "mrkdwn", "text": "Design documents for *{feature_name}* have been generated."}},
+         {"type": "section", "fields": [
+           {"type": "mrkdwn", "text": "*Feature:*\n{feature_name}"},
+           {"type": "mrkdwn", "text": "*Phases:*\n{phase_count}"}
+         ]},
+         {"type": "context", "elements": [{"type": "mrkdwn", "text": "Next: Run `/init-impl` to generate implementation system"}]}
+       ]
+     }' > /dev/null 2>&1 || true
+   ```
+
+3. **Continue with normal completion output** (notification failure should not block)
+
+## Related Skills
+
+| Skill | Purpose | When to Use |
+|-------|---------|-------------|
+| `/health-check` | Project setup verification | Before starting, ensure project is configured correctly |
+| `/init-impl` | Generate implementation system | After design docs are complete |
+| `/status` | Check implementation progress | During implementation |
+| `/review` | Quality review | After completing each phase |
+| `/generate-docs` | Auto-generate documentation | After feature implementation is complete |

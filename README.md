@@ -8,7 +8,11 @@ Reusable feature planning and implementation skills for Claude Code.
 |-------|-------------|-----------------|
 | **plan-feature** | Q&A-based phase-by-phase design document generation | "Design an auth feature" |
 | **init-impl** | Generate checklists and commands from design docs | "Prepare to implement auth" |
-| **slack-notify** | Send Slack notifications on skill completion | Auto-triggered via hooks |
+| **health-check** | Diagnose project configuration and suggest optimizations | "Check project health" |
+| **status** | Display implementation progress dashboard | `/status user-auth` |
+| **review** | Review completed phases for quality and consistency | `/review user-auth phase-2` |
+| **generate-docs** | Generate API docs, changelog, architecture diagrams | `/generate-docs user-auth` |
+| **slack-notify** | Slack notification configuration (built into each skill) | Configure `webhook_url` only |
 | **worktree** | Git worktree management for parallel branch development | `/worktree-add feature/auth` |
 
 ## Quick Start
@@ -84,24 +88,33 @@ Ask Claude:
 ## Workflow
 
 ```
+[health-check] Verify project setup (optional)
+    ↓
 Idea
     ↓
 [plan-feature] Gather requirements via Q&A
-    ↓
-📁 docs/plans/{feature}/
-├── 00_OVERVIEW.md     # Overall overview
-├── 01_PHASE1.md       # Phase 1 details
+    ↓                              ┌─────────────────┐
+📁 docs/plans/{feature}/           │  Slack notify   │
+├── 00_OVERVIEW.md                 │  (built-in)     │
+├── 01_PHASE1.md                   └─────────────────┘
 └── ...
     ↓
 [init-impl] Parse design documents
     ↓
 📁 docs/checklists/{feature}.md      # Checklist
 📁 .claude/commands/{feature}/       # Slash commands
-├── status.md    → /status
 ├── phase1.md    → /phase1
 └── ...
     ↓
-Start implementation with /phase1!
+Implementation with /phase1, /phase2, ...
+    ↓
+[status] Check progress             # /status {feature}
+    ↓
+[review] Quality review per phase   # /review {feature} phase-N
+    ↓
+[generate-docs] Auto-generate docs  # /generate-docs {feature}
+    ↓
+Done! 🎉
 ```
 
 ## Independent Skill Structure
@@ -110,33 +123,57 @@ Each skill is completely independent:
 
 ```
 .claude/skills/
+├── _shared/
+│   └── notify.md              # Shared notification templates
+│
 ├── plan-feature/
-│   ├── SKILL.md           # Skill definition
-│   ├── config.yaml        # Skill-specific config
-│   ├── questions.md       # Q&A template
+│   ├── SKILL.md               # Skill definition
+│   ├── config.yaml            # Skill-specific config
+│   ├── questions.md           # Q&A template
 │   └── templates/
 │
 ├── init-impl/
-│   ├── SKILL.md           # Skill definition
-│   ├── config.yaml        # Skill-specific config
+│   ├── SKILL.md               # Skill definition
+│   ├── config.yaml            # Skill-specific config
+│   └── templates/
+│
+├── health-check/
+│   ├── SKILL.md               # Skill definition
+│   ├── config.yaml            # Check rules config
+│   └── templates/
+│
+├── status/
+│   ├── SKILL.md               # Skill definition
+│   ├── config.yaml            # Display settings
+│   └── templates/
+│
+├── review/
+│   ├── SKILL.md               # Skill definition
+│   ├── config.yaml            # Review categories
+│   └── templates/
+│
+├── generate-docs/
+│   ├── SKILL.md               # Skill definition
+│   ├── config.yaml            # Generator settings
 │   └── templates/
 │
 ├── slack-notify/
-│   ├── SKILL.md           # Skill definition
-│   └── config.yaml        # Webhook URL, channel settings
+│   ├── SKILL.md               # Configuration guide
+│   └── config.yaml            # webhook_url only
 │
 └── worktree/
-    ├── SKILL.md           # Skill definition
-    ├── config.yaml        # Worktree settings
-    └── README.md          # Quick reference
+    ├── SKILL.md               # Skill definition
+    ├── config.yaml            # Worktree settings
+    └── README.md              # Quick reference
 
 .claude/hooks/
-└── slack-notify.sh        # PostToolUse hook script
+└── pre-commit-quality.sh      # Pre-commit quality checks
 ```
 
 - One folder = one complete skill
 - Clean skill addition/removal
 - No config conflicts
+- Slack notifications are built into each skill (no hook needed)
 
 ## Configuration Options
 
@@ -160,13 +197,52 @@ Each skill is completely independent:
 | `build.command` | Build command | - |
 | `build.test` | Test command | - |
 
+### health-check
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `checks.required_files` | Required files list with severity | `.claude/settings.json`, etc. |
+| `checks.required_dirs` | Required directories list | `.claude/commands`, etc. |
+| `checks.settings.validate_json` | Validate JSON syntax | `true` |
+| `checks.hooks.executable` | Check hook file permissions | `true` |
+| `report.show_passing` | Show passing checks | `true` |
+
+### status
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `paths.plans` | Design docs path | `docs/plans` |
+| `paths.checklist_file` | Checklist filename | `checklist.md` |
+| `display.progress_bar.width` | Progress bar width | `20` |
+| `feature_detection.auto_detect` | Auto-detect current feature | `true` |
+| `overview.sort_by` | Sort order | `last_updated` |
+
+### review
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `categories.*.enabled` | Enable per category | `true` |
+| `categories.*.weight` | Score weight (%) | varies |
+| `focus_modes` | Focus mode definitions | `quality`, `security`, etc. |
+| `report.show_code_snippets` | Show code snippets | `true` |
+
+### generate-docs
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `output.base_path` | Documentation output path | `docs` |
+| `output.changelog` | Changelog file path | `CHANGELOG.md` |
+| `generators.*.enabled` | Enable per generator | `true` |
+| `mermaid.theme` | Mermaid diagram theme | `default` |
+
 ### slack-notify
 
 | Option | Description | Default |
 |--------|-------------|---------|
 | `webhook_url` | Slack Incoming Webhook URL | - (required) |
-| `channel` | Target Slack channel | `#claude-notifications` |
-| `target_skills` | Skills to monitor | `plan-feature`, `init-impl`, `*:phase*` |
+| `channel` | Target Slack channel (informational) | `#claude-notifications` |
+
+> **Note:** Notifications are now built into each skill. Just configure `webhook_url` - no hooks or `target_skills` needed.
 
 ### worktree
 
@@ -189,18 +265,19 @@ Each skill is completely independent:
 | `/worktree-info` | Show current worktree info |
 | `/worktree-switch [path]` | Switch to another worktree |
 
-**Hooks Setup Required:**
+**Pre-commit Hook (Optional):**
 
-Add to `.claude/settings.local.json`:
+Add to `.claude/settings.local.json` for quality checks before commits:
 ```json
 {
   "hooks": {
-    "Stop": [
+    "PreToolUse": [
       {
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/slack-notify.sh"
+            "command": ".claude/hooks/pre-commit-quality.sh \"$TOOL_INPUT\""
           }
         ]
       }

@@ -146,3 +146,41 @@ Start Phase 1 implementation with `/{feature}-phase1`!
 - Design documents in `{plans_path}/{feature}/` preserved
 - Re-run init-impl if you need to regenerate commands
 ```
+
+## On Completion (Slack Notification)
+
+After successful generation, send Slack notification if configured:
+
+1. **Check webhook configuration:**
+   ```bash
+   WEBHOOK=$(grep 'webhook_url:' skills/slack-notify/config.yaml 2>/dev/null | sed 's/.*"\(.*\)"/\1/')
+   ```
+
+2. **If webhook is configured** (not empty and doesn't contain "YOUR"):
+   ```bash
+   curl -s -X POST "$WEBHOOK" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "blocks": [
+         {"type": "header", "text": {"type": "plain_text", "text": "🔧 Implementation System Ready", "emoji": true}},
+         {"type": "section", "text": {"type": "mrkdwn", "text": "Checklist and commands for *{feature_name}* are ready."}},
+         {"type": "section", "fields": [
+           {"type": "mrkdwn", "text": "*Feature:*\n{feature_name}"},
+           {"type": "mrkdwn", "text": "*Commands:*\n/{feature}-phase1 ~ /{feature}-phaseN"}
+         ]},
+         {"type": "context", "elements": [{"type": "mrkdwn", "text": "Next: Start with `/{feature}-phase1`"}]}
+       ]
+     }' > /dev/null 2>&1 || true
+   ```
+
+3. **Continue with normal completion output** (notification failure should not block)
+
+## Related Skills
+
+| Skill | Purpose | When to Use |
+|-------|---------|-------------|
+| `/plan-feature` | Generate design documents | Before init-impl, create the design docs |
+| `/status` | Check implementation progress | During implementation to track completion |
+| `/review` | Quality review | After completing each phase |
+| `/generate-docs` | Auto-generate documentation | After all phases are complete |
+| `/health-check` | Project setup verification | If experiencing issues |

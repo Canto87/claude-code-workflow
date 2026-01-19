@@ -1,148 +1,193 @@
 ---
 name: slack-notify
-description: Send Slack notifications on skill completion. Auto-triggered via PostToolUse hooks.
+description: Slack notification configuration. Notifications are built into each skill - just configure webhook_url.
 allowed-tools:
   - Bash
   - Read
 ---
 
-# Slack Notification Skill
+# Slack Notification System
 
-Sends Slack channel notifications when Claude Code skills (plan-feature, init-impl, phase commands) complete.
+Provides Slack notifications when workflow skills complete. **Notifications are built into each skill** - no hook configuration needed.
 
-## When to Use
+## How It Works
 
-This skill is primarily **auto-triggered** by PostToolUse hooks:
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  Skill runs     │────▶│  On completion  │────▶│  Slack webhook  │
+│  (plan-feature) │     │  curl to Slack  │     │  notification   │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+                               │
+                               ▼
+                        ┌─────────────────┐
+                        │  config.yaml    │
+                        │  webhook_url    │
+                        └─────────────────┘
+```
 
-- When `plan-feature` skill completes
-- When `init-impl` skill completes
-- When `/phase{N}` commands complete
+**No hooks required!** Each skill handles its own notification.
 
-Can also be used manually for testing or verifying setup.
+## Quick Setup
 
-## Prerequisites
+### 1. Create Slack Webhook
 
-1. **Create Slack Incoming Webhook**
-   - Create at https://api.slack.com/messaging/webhooks
-   - Select target channel
+1. Go to https://api.slack.com/messaging/webhooks
+2. Create new webhook for your workspace
+3. Select target channel
+4. Copy webhook URL
 
-2. **Configure config.yaml**
-   - `webhook_url`: Replace with actual Webhook URL
-   - `channel`: Target channel name
+### 2. Configure webhook_url
 
-3. **Register Hooks**
-   - Add PostToolUse hook to `.claude/settings.local.json`
+Edit `skills/slack-notify/config.yaml`:
+
+```yaml
+webhook_url: "https://hooks.slack.com/services/YOUR/ACTUAL/URL"
+```
+
+**That's it!** Skills will automatically send notifications.
+
+## Integrated Skills
+
+| Skill | Notification |
+|-------|-------------|
+| `/plan-feature` | 📋 Feature Design Complete |
+| `/init-impl` | 🔧 Implementation System Ready |
+| `/review` | 🔍 Review Complete |
+| `/generate-docs` | 📚 Documentation Generated |
+
+**Not notified** (informational only):
+- `/status` - Progress check
+- `/health-check` - Diagnostic
+
+## Message Examples
+
+### plan-feature
+
+```
+📋 Feature Design Complete
+
+Design documents for user-auth have been generated.
+
+Feature: user-auth
+Phases: 4
+
+Next: Run /init-impl to generate implementation system
+```
+
+### init-impl
+
+```
+🔧 Implementation System Ready
+
+Checklist and commands for user-auth are ready.
+
+Feature: user-auth
+Commands: /user-auth-phase1 ~ /user-auth-phase4
+
+Next: Start with /user-auth-phase1
+```
+
+### review
+
+```
+🔍 Review Complete
+
+user-auth Phase 2 review is complete.
+
+Verdict: ✅ APPROVED
+Issues: 0 errors, 2 warnings
+
+Next: Proceed to Phase 3
+```
+
+### generate-docs
+
+```
+📚 Documentation Generated
+
+Documentation for user-auth has been created.
+
+Files: 5 generated
+Types: API, Models, Architecture
+
+Next: Review and commit documentation
+```
 
 ## Configuration
 
-Settings in `config.yaml`:
+`config.yaml` settings:
 
 ```yaml
-# Webhook URL (required)
-webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+# Required: Your Slack webhook URL
+webhook_url: "https://hooks.slack.com/services/XXX/YYY/ZZZ"
 
-# Target channel
+# Optional: Target channel (informational, set in webhook)
 channel: "#claude-notifications"
-
-# Skills to monitor
-target_skills:
-  - "plan-feature"
-  - "init-impl"
-  - pattern: "*:phase*"
 ```
 
-## Monitored Skills
+## Disabling Notifications
 
-| Skill | Trigger Condition | Notification Content |
-|-------|-------------------|---------------------|
-| `plan-feature` | Design document generation complete | Generated files list, next step guidance |
-| `init-impl` | Implementation system generation complete | Checklist, command list, next step guidance |
-| `/phase{N}` | Phase implementation complete | Completed phase number, next phase guidance |
+To disable notifications:
 
-## Message Format
+1. **Remove or comment out webhook_url:**
+   ```yaml
+   # webhook_url: "https://hooks.slack.com/..."
+   ```
 
-### plan-feature Completion
+2. **Or set to placeholder:**
+   ```yaml
+   webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+   ```
 
+Skills check for "YOUR" in URL and skip notification.
+
+## Manual Testing
+
+Test notification manually:
+
+```bash
+curl -s -X POST "YOUR_WEBHOOK_URL" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "blocks": [
+      {"type": "header", "text": {"type": "plain_text", "text": "🧪 Test Notification", "emoji": true}},
+      {"type": "section", "text": {"type": "mrkdwn", "text": "Slack notifications are working!"}}
+    ]
+  }'
 ```
-:clipboard: Feature Design Complete
-
-Feature planning is complete.
-
-Generated Files:
-- docs/plans/{feature}/00_OVERVIEW.md
-- Phase documents
-
-Next Step: Run `init-impl` skill
-```
-
-### init-impl Completion
-
-```
-:hammer_and_wrench: Implementation System Ready
-
-Implementation system is ready.
-
-Generated Files:
-- docs/checklists/{feature}.md
-- .claude/commands/{feature}/
-
-Next Step: Start with `/phase1` command
-```
-
-### Phase Completion
-
-```
-:white_check_mark: Phase {N} Complete
-
-Phase {N} of {feature} is complete.
-
-Checklist: docs/checklists/{feature}.md
-
-Next Step: Continue with `/phase{N+1}`
-```
-
-## Setup Verification
-
-To verify setup is correct:
-
-1. Check that `webhook_url` in `config.yaml` is a real URL
-2. Verify hooks are registered in `.claude/settings.local.json`
-3. Run `plan-feature` or `init-impl` skill to confirm notification receipt
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| No notifications | Verify webhook_url is correct |
-| Wrong channel | Ensure config.yaml channel matches webhook setup |
-| Specific skill not notifying | Check if skill is included in target_skills |
-| Script error | Debug with `bash -x .claude/hooks/slack-notify.sh` |
+| No notifications | Check webhook_url in config.yaml |
+| Wrong channel | Webhook URL determines channel - create new webhook for different channel |
+| Notification fails silently | By design - failures don't block skill completion |
 
-## Dependencies
+## Technical Details
 
-- `jq`: JSON parsing (included by default on macOS)
-- `curl`: HTTP requests (included by default)
+Each skill includes this pattern in "On Completion" section:
 
-## Architecture
+```bash
+# Check webhook configuration
+WEBHOOK=$(grep 'webhook_url:' skills/slack-notify/config.yaml 2>/dev/null | sed 's/.*"\(.*\)"/\1/')
 
-```
-PostToolUse Hook (matcher: "Skill")
-    |
-    v
-slack-notify.sh
-    |
-    +-- Check skill name (plan-feature, init-impl, *:phase*)
-    |
-    +-- Read config.yaml (webhook_url, channel)
-    |
-    +-- Format message
-    |
-    v
-Slack Webhook API
+# Skip if not configured
+if [[ -z "$WEBHOOK" || "$WEBHOOK" == *"YOUR"* ]]; then
+    # No notification
+    exit 0
+fi
+
+# Send notification (silent failure)
+curl -s -X POST "$WEBHOOK" ... > /dev/null 2>&1 || true
 ```
 
-## Related Skills
+## Extending to Custom Skills
 
-- `plan-feature`: Generate feature design documents
-- `init-impl`: Generate implementation system
-- `implement-layer`: Implement Clean Architecture layers
+Add notification to your custom skill:
+
+1. Add `Bash` to `allowed-tools` in SKILL.md
+2. Add "On Completion" section (copy pattern from plan-feature)
+3. Customize message blocks for your skill
+
+See `skills/_shared/notify.md` for templates.

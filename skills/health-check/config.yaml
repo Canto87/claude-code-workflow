@@ -1,0 +1,103 @@
+# Health Check Skill Configuration
+# Defines what to check in the project
+
+checks:
+  # Required files that must exist
+  required_files:
+    - path: ".claude/settings.json"
+      description: "Claude Code settings file"
+      severity: error
+      fix: "Run `claude init` or create the file manually"
+
+    - path: "CLAUDE.md"
+      description: "Project instructions for Claude"
+      severity: warning
+      fix: "Create CLAUDE.md with project context and guidelines"
+
+    - path: ".gitignore"
+      description: "Git ignore rules"
+      severity: warning
+      fix: "Create .gitignore to exclude unnecessary files"
+
+    - path: "README.md"
+      description: "Project documentation"
+      severity: info
+      fix: "Add README.md with project description"
+
+  # Recommended directories
+  required_dirs:
+    - path: ".claude/commands"
+      description: "Custom slash commands"
+      severity: info
+      fix: "Create directory for custom commands"
+
+    - path: "docs/plans"
+      description: "Design documents location"
+      severity: info
+      fix: "Create directory for feature plans"
+
+  # Settings file validation
+  settings:
+    file: ".claude/settings.json"
+    validate_json: true
+    required_keys:
+      - key: "permissions"
+        description: "Permissions configuration"
+        severity: warning
+
+    recommended_keys:
+      - key: "permissions.allow"
+        description: "Allowed tools list"
+      - key: "permissions.deny"
+        description: "Denied tools list"
+
+  # Hook file validation
+  hooks:
+    directories:
+      - "hooks"
+      - ".claude/hooks"
+    checks:
+      executable: true      # Check chmod +x
+      shebang: true         # Check #!/bin/bash etc.
+    extensions:
+      - ".sh"
+      - ".bash"
+
+  # Skill validation
+  skills:
+    directories:
+      - "skills"
+      - ".claude/commands"
+    required_files:
+      - "SKILL.md"          # or just .md for commands
+    optional_files:
+      - "config.yaml"
+    frontmatter_required:
+      - "name"
+      - "description"
+
+# Severity definitions
+severity_levels:
+  error:
+    icon: "🔴"
+    label: "Error"
+    description: "Must fix - blocks functionality"
+    exit_code: 1
+
+  warning:
+    icon: "🟡"
+    label: "Warning"
+    description: "Should fix - may cause issues"
+    exit_code: 0
+
+  info:
+    icon: "🟢"
+    label: "Info"
+    description: "Nice to have - optional improvement"
+    exit_code: 0
+
+# Report settings
+report:
+  show_passing: true        # Show passed checks
+  show_recommendations: true
+  group_by_severity: true
