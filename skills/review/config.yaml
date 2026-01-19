@@ -1,0 +1,142 @@
+# Review Skill Configuration
+# Defines review checks and criteria
+
+paths:
+  plans: "docs/plans"
+  checklist_file: "checklist.md"
+
+# Review categories and their checks
+categories:
+  design_consistency:
+    enabled: true
+    weight: 25  # Percentage of overall score
+    checks:
+      - name: "API endpoints match"
+        description: "Implemented APIs match design specifications"
+      - name: "Data models match"
+        description: "Types and schemas match design"
+      - name: "Architecture followed"
+        description: "Code structure follows planned architecture"
+      - name: "Dependencies implemented"
+        description: "Planned integrations are in place"
+
+  code_quality:
+    enabled: true
+    weight: 25
+    checks:
+      - name: "Error handling"
+        description: "Errors are properly handled and wrapped"
+        patterns:
+          bad: ["return err$", "panic\\("]
+          good: ["fmt.Errorf", "errors.Wrap", "errors.New"]
+      - name: "Logging"
+        description: "Appropriate logging is in place"
+        patterns:
+          required: ["log\\.", "logger\\.", "slog\\."]
+      - name: "Function length"
+        description: "Functions are not too long"
+        threshold: 50  # lines
+      - name: "Naming conventions"
+        description: "Names follow language conventions"
+
+  test_coverage:
+    enabled: true
+    weight: 20
+    checks:
+      - name: "Unit tests exist"
+        description: "New functions have corresponding tests"
+        patterns:
+          test_file: "_test.go$|_test.py$|\\.test\\.(ts|js)$"
+      - name: "Integration tests"
+        description: "Integration points are tested"
+      - name: "Edge cases"
+        description: "Edge cases are covered in tests"
+
+  security:
+    enabled: true
+    weight: 20
+    checks:
+      - name: "Input validation"
+        description: "User input is validated"
+      - name: "Authentication checks"
+        description: "Auth middleware is applied"
+      - name: "No hardcoded secrets"
+        description: "No secrets in source code"
+        patterns:
+          bad: ["password\\s*=\\s*[\"']", "secret\\s*=\\s*[\"']", "api_key\\s*=\\s*[\"']"]
+      - name: "SQL injection prevention"
+        description: "Parameterized queries used"
+        patterns:
+          bad: ["fmt.Sprintf.*SELECT", "f\"SELECT", "\\+ .*SELECT"]
+
+  completeness:
+    enabled: true
+    weight: 10
+    checks:
+      - name: "Checklist complete"
+        description: "All checklist items marked done"
+      - name: "No unresolved TODOs"
+        description: "No TODO comments in new code"
+        patterns:
+          bad: ["TODO", "FIXME", "HACK", "XXX"]
+      - name: "No placeholders"
+        description: "No placeholder implementations"
+        patterns:
+          bad: ["NotImplemented", "pass\\s*#", "throw new Error\\(\"Not implemented"]
+
+# Verdict determination
+verdicts:
+  approved:
+    condition: "errors == 0 AND warnings <= 2"
+    icon: "✅"
+    message: "Ready to proceed"
+
+  approved_with_warnings:
+    condition: "errors == 0 AND warnings > 2"
+    icon: "⚠️"
+    message: "Can proceed, address warnings when possible"
+
+  needs_work:
+    condition: "errors > 0 AND errors <= 3"
+    icon: "❌"
+    message: "Must fix issues before proceeding"
+
+  blocked:
+    condition: "errors > 3 OR has_critical"
+    icon: "🚫"
+    message: "Critical issues found, cannot proceed"
+
+# Severity definitions
+severity:
+  critical:
+    icon: "🔴"
+    blocks: true
+  error:
+    icon: "🟠"
+    blocks: false
+  warning:
+    icon: "🟡"
+    blocks: false
+  info:
+    icon: "🔵"
+    blocks: false
+
+# Focus mode configurations
+focus_modes:
+  quality:
+    categories: ["code_quality"]
+  security:
+    categories: ["security"]
+  tests:
+    categories: ["test_coverage"]
+  design:
+    categories: ["design_consistency"]
+  completeness:
+    categories: ["completeness"]
+
+# Report settings
+report:
+  show_code_snippets: true
+  max_snippets_per_issue: 3
+  show_suggestions: true
+  show_next_steps: true

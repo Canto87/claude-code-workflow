@@ -1,0 +1,138 @@
+# Generate Docs Skill Configuration
+# Defines documentation generation settings
+
+# Output paths
+output:
+  base_path: "docs"
+  api_path: "docs/api"
+  architecture_path: "docs/architecture"
+  models_path: "docs/models"
+  guides_path: "docs/guides"
+  changelog: "CHANGELOG.md"
+
+# Source paths
+sources:
+  code:
+    - "internal"
+    - "src"
+    - "lib"
+    - "pkg"
+  plans: "docs/plans"
+  migrations: "database/migrations"
+
+# Generator configurations
+generators:
+  api:
+    enabled: true
+    format: "markdown"  # markdown | openapi
+    include:
+      examples: true
+      errors: true
+      authentication: true
+      rate_limits: false
+    template: "templates/api.md"
+
+  changelog:
+    enabled: true
+    format: "keepachangelog"  # keepachangelog | conventional
+    auto_categorize: true
+    categories:
+      - Added
+      - Changed
+      - Deprecated
+      - Removed
+      - Fixed
+      - Security
+    template: "templates/changelog.md"
+
+  architecture:
+    enabled: true
+    diagram_format: "mermaid"
+    include:
+      component: true
+      sequence: true
+      data_flow: true
+      er_diagram: false
+    template: "templates/architecture.md"
+
+  models:
+    enabled: true
+    include:
+      validation: true
+      examples: true
+      relationships: true
+    template: "templates/models.md"
+
+  guides:
+    enabled: true
+    include:
+      curl_examples: true
+      sdk_examples: false
+      configuration: true
+      troubleshooting: true
+    template: "templates/guides.md"
+
+# Language-specific extraction patterns
+extraction:
+  go:
+    handler_patterns:
+      - "func.*Handler.*http\\.ResponseWriter"
+      - "func.*\\(.*gin\\.Context\\)"
+      - "func.*\\(.*echo\\.Context\\)"
+    struct_pattern: "type\\s+(\\w+)\\s+struct"
+    route_patterns:
+      - "router\\.(GET|POST|PUT|DELETE|PATCH)"
+      - "r\\.(GET|POST|PUT|DELETE|PATCH)"
+
+  typescript:
+    handler_patterns:
+      - "export.*async.*Request.*Response"
+      - "@(Get|Post|Put|Delete|Patch)\\("
+    interface_pattern: "export interface (\\w+)"
+    route_patterns:
+      - "app\\.(get|post|put|delete|patch)\\("
+      - "router\\.(get|post|put|delete|patch)\\("
+
+  python:
+    handler_patterns:
+      - "@app\\.route"
+      - "@router\\.(get|post|put|delete)"
+      - "def.*request.*:"
+    class_pattern: "class (\\w+).*:"
+    route_patterns:
+      - "app\\.add_url_rule"
+      - "@.*\\.route\\("
+
+# Changelog generation
+changelog_rules:
+  # Map commit prefixes to categories
+  commit_mapping:
+    feat: "Added"
+    add: "Added"
+    new: "Added"
+    change: "Changed"
+    update: "Changed"
+    refactor: "Changed"
+    deprecate: "Deprecated"
+    remove: "Removed"
+    delete: "Removed"
+    fix: "Fixed"
+    bugfix: "Fixed"
+    security: "Security"
+    vuln: "Security"
+
+  # Commits to ignore
+  ignore_patterns:
+    - "^Merge"
+    - "^WIP"
+    - "^wip"
+    - "^fixup"
+    - "^squash"
+
+# Mermaid diagram settings
+mermaid:
+  theme: "default"
+  component:
+    direction: "TB"  # TB, LR, BT, RL
+  sequence:
+    show_participant_boxes: true

@@ -1,53 +1,24 @@
 # Slack Notification Configuration
-# Configure webhook URL and channel settings here
+#
+# Notifications are built into each skill - just configure webhook_url here.
+# No hook setup required!
 
-# Slack Incoming Webhook URL
+# Your Slack Incoming Webhook URL (required)
 # Create at: https://api.slack.com/messaging/webhooks
-# Replace with your actual webhook URL
 webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
-# Target Slack channel (must match webhook configuration)
+# Target channel (informational - channel is determined by webhook)
 channel: "#claude-notifications"
 
-# Skills to monitor for notifications
-target_skills:
-  - "plan-feature"      # Feature design completion
-  - "init-impl"         # Implementation system generation
-  - pattern: "*:phase*" # Phase command completion (e.g., scratch-pack-system:phase1)
+# Note: The following settings are for reference only.
+# Each skill handles its own notification format.
 
-# Message customization per skill type
-messages:
-  plan-feature:
-    title: "Feature Design Complete"
-    icon: ":clipboard:"
-    color: "#36a64f"  # Green
-    include_files: true
-    include_next_step: true
-
-  init-impl:
-    title: "Implementation System Ready"
-    icon: ":hammer_and_wrench:"
-    color: "#4a90d9"  # Blue
-    include_files: true
-    include_next_step: true
-
-  phase:
-    title: "Phase {N} Complete"
-    icon: ":white_check_mark:"
-    color: "#2eb886"  # Teal
-    include_files: false
-    include_next_step: true
-
-# Notification settings
-settings:
-  # Include generated file list in notification
-  include_file_list: true
-
-  # Include next step guidance
-  include_next_steps: true
-
-  # Maximum output length to include (characters)
-  max_output_length: 1000
-
-  # Silent mode - suppress errors to not disrupt workflow
-  silent_errors: true
+# Skills that send notifications:
+#   - plan-feature: 📋 Feature Design Complete
+#   - init-impl: 🔧 Implementation System Ready
+#   - review: 🔍 Review Complete
+#   - generate-docs: 📚 Documentation Generated
+#
+# Skills that don't notify (informational only):
+#   - status
+#   - health-check
