@@ -19,14 +19,50 @@ Reusable feature planning and implementation skills for Claude Code.
 
 ### Installation
 
+**Full Installation (Recommended)**
+```bash
+# One-liner: Install all skills
+curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash
+```
+
+**Selective Installation**
+```bash
+# Install specific skills only
+curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash -s -- --skills=plan-feature,init-impl
+
+# List available skills
+curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash -s -- --list
+
+# Interactive selection menu
+curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash -s -- --interactive
+```
+
+**Manual Installation**
 ```bash
 # Git Clone
 git clone https://github.com/Canto87/claude-code-workflow.git /tmp/claude-code-workflow
-cp -r /tmp/claude-code-workflow/skills/* .claude/skills/
-rm -rf /tmp/claude-code-workflow
 
-# Edit each skill's config.yaml for your project
+# Copy specific skills (always include _shared)
+cp -r /tmp/claude-code-workflow/skills/_shared .claude/skills/
+cp -r /tmp/claude-code-workflow/skills/plan-feature .claude/skills/
+cp -r /tmp/claude-code-workflow/skills/init-impl .claude/skills/
+
+# Cleanup
+rm -rf /tmp/claude-code-workflow
 ```
+
+**Available Skills:**
+| Skill | Description |
+|-------|-------------|
+| `_shared` | Shared templates (always required) |
+| `plan-feature` | Q&A-based design document generation |
+| `init-impl` | Generate checklists and commands |
+| `health-check` | Diagnose project configuration |
+| `status` | Display implementation progress dashboard |
+| `review` | Code quality review agent |
+| `generate-docs` | Auto documentation generator |
+| `slack-notify` | Slack notification configuration |
+| `worktree` | Git worktree management |
 
 ### Auto-Configuration (Recommended)
 
