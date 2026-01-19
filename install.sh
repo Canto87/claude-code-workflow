@@ -32,6 +32,7 @@ AVAILABLE_SKILLS=(
 SELECTED_SKILLS=""
 LIST_ONLY=false
 INTERACTIVE=false
+AUTO_YES=false
 
 print_info() {
     echo -e "${GREEN}[INFO]${NC} $1"
@@ -56,6 +57,7 @@ Options:
     --skills=SKILL1,SKILL2  Install specific skills only (comma-separated)
     --list                  List available skills and exit
     --interactive           Interactive skill selection menu
+    --yes, -y               Skip confirmation prompt (for automation)
     --help                  Show this help message
 
 Available Skills:
@@ -74,6 +76,7 @@ Examples:
     ./install.sh --list                             # List available skills
     ./install.sh --interactive                      # Interactive selection
     ./install.sh --output=custom/skills             # Custom output directory
+    ./install.sh --yes                              # Skip confirmation (CI/CD)
 
 Note: _shared folder is always installed as it contains shared templates.
 
@@ -174,6 +177,39 @@ validate_skills() {
     echo "${valid_skills[*]}"
 }
 
+confirm_install() {
+    echo ""
+    echo -e "${CYAN}Claude Code Workflow Installer${NC}"
+    echo ""
+    echo "This will install:"
+    echo "  - _shared (required)"
+
+    if [[ -n "$SELECTED_SKILLS" ]]; then
+        IFS=',' read -ra skill_array <<< "$SELECTED_SKILLS"
+        for skill in "${skill_array[@]}"; do
+            echo "  - $skill"
+        done
+    else
+        for skill_info in "${AVAILABLE_SKILLS[@]}"; do
+            echo "  - ${skill_info%%:*}"
+        done
+    fi
+
+    echo ""
+    echo "Target: $SKILLS_DIR/"
+    echo ""
+
+    if [[ "$AUTO_YES" == true ]]; then
+        return 0
+    fi
+
+    read -p "Continue? (y/n): " answer
+    case "$answer" in
+        [Yy]* ) return 0 ;;
+        * ) echo "Installation cancelled."; exit 0 ;;
+    esac
+}
+
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -191,6 +227,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --interactive)
             INTERACTIVE=true
+            shift
+            ;;
+        --yes|-y)
+            AUTO_YES=true
             shift
             ;;
         --help)
@@ -225,6 +265,11 @@ fi
 if ! command -v git &> /dev/null; then
     print_error "git is required but not installed."
     exit 1
+fi
+
+# Confirm installation (skip for --interactive which already has user interaction)
+if [[ "$INTERACTIVE" == false ]]; then
+    confirm_install
 fi
 
 # Create temp directory

@@ -17,38 +17,35 @@ Reusable feature planning and implementation skills for Claude Code.
 
 ## Quick Start
 
-### Installation
+### Installation (Recommended)
 
-**Full Installation (Recommended)**
 ```bash
-# One-liner: Install all skills
+git clone https://github.com/Canto87/claude-code-workflow.git /tmp/claude-code-workflow
+cp -r /tmp/claude-code-workflow/skills/* .claude/skills/
+rm -rf /tmp/claude-code-workflow
+```
+
+### One-liner Install
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash
 ```
 
-**Selective Installation**
+Options:
+- `--skills=X,Y`: Install specific skills only
+- `--interactive`: Interactive selection menu
+- `--yes`: Skip confirmation prompt (for CI/CD)
+
+**Examples:**
 ```bash
 # Install specific skills only
 curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash -s -- --skills=plan-feature,init-impl
 
-# List available skills
-curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash -s -- --list
-
 # Interactive selection menu
 curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash -s -- --interactive
-```
 
-**Manual Installation**
-```bash
-# Git Clone
-git clone https://github.com/Canto87/claude-code-workflow.git /tmp/claude-code-workflow
-
-# Copy specific skills (always include _shared)
-cp -r /tmp/claude-code-workflow/skills/_shared .claude/skills/
-cp -r /tmp/claude-code-workflow/skills/plan-feature .claude/skills/
-cp -r /tmp/claude-code-workflow/skills/init-impl .claude/skills/
-
-# Cleanup
-rm -rf /tmp/claude-code-workflow
+# Skip confirmation (for automation)
+curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash -s -- --yes
 ```
 
 **Available Skills:**
@@ -69,10 +66,10 @@ rm -rf /tmp/claude-code-workflow
 After installation, ask Claude:
 
 ```
-"Configure claude-code-workflow for this project"
+"Configure plan-feature, init-impl, health-check, status, review, generate-docs, slack-notify, worktree skills for this project"
 ```
 
-Claude will analyze your project structure and update config.yaml files automatically.
+Claude will analyze your project structure and update each skill's config.yaml automatically.
 
 ### Manual Configuration
 
