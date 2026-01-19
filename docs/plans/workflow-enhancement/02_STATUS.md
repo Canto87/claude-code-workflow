@@ -1,50 +1,50 @@
 # Phase 2: Status/Progress Skill
 
-> 구현 진행 상황 대시보드
+> Implementation progress dashboard
 
-## 목적
+## Purpose
 
-init-impl로 생성된 체크리스트의 진행 상황을 시각화하고,
-전체 구현 현황을 한눈에 파악할 수 있도록 합니다.
+Visualize the progress of checklists created by init-impl and provide
+an overview of the overall implementation status at a glance.
 
-## 사용 시나리오
+## Usage Scenarios
 
 ```bash
-# 현재 기능 진행 상황 확인
+# Check current feature progress
 > /status
 
-# 특정 기능 상태 확인
+# Check specific feature status
 > /status user-auth
 
-# 전체 프로젝트 상태 요약
+# Get overall project status summary
 > /status --all
 ```
 
-## 데이터 소스
+## Data Source
 
 ```
 docs/plans/{feature_name}/
 ├── 00_OVERVIEW.md
 ├── 01_PHASE1.md
 ├── 02_PHASE2.md
-└── checklist.md          ← 진행 상황 파싱
+└── checklist.md          ← Progress parsing
 ```
 
-### checklist.md 파싱 규칙
+### checklist.md Parsing Rules
 
 ```markdown
 ## Phase 1: Basic Auth
-- [x] Create user model        ← 완료
-- [x] Implement signup API     ← 완료
-- [ ] Add login endpoint       ← 미완료
-- [ ] Write unit tests         ← 미완료
+- [x] Create user model        ← Completed
+- [x] Implement signup API     ← Completed
+- [ ] Add login endpoint       ← Not completed
+- [ ] Write unit tests         ← Not completed
 
 ## Phase 2: JWT Management
-- [ ] Generate access token    ← 미완료
-- [ ] Implement refresh logic  ← 미완료
+- [ ] Generate access token    ← Not completed
+- [ ] Implement refresh logic  ← Not completed
 ```
 
-**파싱 결과:**
+**Parsing Result:**
 ```yaml
 phases:
   - name: "Phase 1: Basic Auth"
@@ -61,9 +61,9 @@ overall:
   progress: 33%
 ```
 
-## 출력 형식
+## Output Format
 
-### 기본 출력
+### Basic Output
 
 ```
 ## 📊 Implementation Status: user-auth
@@ -97,7 +97,7 @@ overall:
 - Estimated remaining: 2 phases
 ```
 
-### 전체 프로젝트 요약 (`--all`)
+### Full Project Summary (`--all`)
 
 ```
 ## 📊 Project Status Overview
@@ -120,23 +120,23 @@ overall:
 → Continue with "user-auth" Phase 2 (60% complete)
 ```
 
-## 파일 구조
+## File Structure
 
 ```
 skills/status/
-├── SKILL.md              # Skill 정의
-├── config.yaml           # 설정
+├── SKILL.md              # Skill definition
+├── config.yaml           # Settings
 └── templates/
-    ├── status.md         # 단일 기능 템플릿
-    └── overview.md       # 전체 요약 템플릿
+    ├── status.md         # Single feature template
+    └── overview.md       # Overall summary template
 ```
 
-## config.yaml 스키마
+## config.yaml Schema
 
 ```yaml
-# status skill 설정
+# status skill settings
 paths:
-  plans: "docs/plans"     # 설계 문서 경로
+  plans: "docs/plans"     # Design documents path
 
 parsing:
   checklist_file: "checklist.md"
@@ -149,7 +149,7 @@ display:
   show_blockers: true
 ```
 
-## SKILL.md 정의
+## SKILL.md Definition
 
 ```yaml
 ---
@@ -159,12 +159,12 @@ allowed-tools: Read, Glob
 ---
 ```
 
-## 핵심 로직
+## Core Logic
 
-### 1. 체크리스트 파싱
+### 1. Checklist Parsing
 
 ```
-Input: checklist.md 내용
+Input: checklist.md content
 Output:
   {
     phases: [
@@ -174,14 +174,14 @@ Output:
   }
 ```
 
-### 2. 진행률 계산
+### 2. Progress Calculation
 
 ```
 phase_progress = completed_items / total_items * 100
 overall_progress = sum(completed) / sum(total) * 100
 ```
 
-### 3. 상태 결정
+### 3. Status Determination
 
 ```
 status =
@@ -190,31 +190,31 @@ status =
   else: "⏳ Pending"
 ```
 
-### 4. 현재 포커스 찾기
+### 4. Finding Current Focus
 
 ```
 current_focus = first phase where 0% < progress < 100%
 next_task = first unchecked item in current_focus
 ```
 
-## 연동
+## Integration
 
-### init-impl과 연동
-
-```
-/init-impl 실행 후 → checklist.md 생성
-/status 실행 → checklist.md 파싱하여 진행 상황 표시
-```
-
-### plan-feature와 연동
+### Integration with init-impl
 
 ```
-/plan-feature 완료 → 00_OVERVIEW.md에 Phase 목록 존재
-/status → Phase 메타데이터 참조 가능
+/init-impl executed → checklist.md created
+/status executed → Parse checklist.md and display progress
 ```
 
-## 확장 가능성
+### Integration with plan-feature
 
-- **Slack 연동**: 일일 진행 상황 자동 리포트
-- **Git 연동**: 커밋과 체크리스트 항목 자동 매칭
-- **번다운 차트**: 시간 경과에 따른 진행률 시각화
+```
+/plan-feature completed → Phase list exists in 00_OVERVIEW.md
+/status → Can reference phase metadata
+```
+
+## Extensibility
+
+- **Slack Integration**: Daily automatic progress reports
+- **Git Integration**: Auto-match commits with checklist items
+- **Burndown Chart**: Progress visualization over time

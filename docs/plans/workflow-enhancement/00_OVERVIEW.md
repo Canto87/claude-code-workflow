@@ -1,14 +1,14 @@
-# Workflow Enhancement - 기능 확장
+# Workflow Enhancement - Feature Expansion
 
-> claude-code-templates에서 영감을 받은 워크플로우 개선 기능들
+> Workflow enhancement features inspired by claude-code-templates
 
-## 개요
+## Overview
 
-davila7/claude-code-templates 레포지토리의 유용한 개념들을 차용하여
-claude-code-workflow의 기능을 확장합니다. 마켓플레이스 형태가 아닌,
-**워크플로우 특화 도구**로서의 정체성을 유지하면서 실용적인 기능을 추가합니다.
+Borrowing useful concepts from the davila7/claude-code-templates repository
+to expand the functionality of claude-code-workflow. We add practical features
+while maintaining our identity as a **workflow-specialized tool** rather than a marketplace.
 
-## 시스템 아키텍처
+## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -17,67 +17,67 @@ claude-code-workflow의 기능을 확장합니다. 마켓플레이스 형태가 
 │                                                                  │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐       │
 │  │ /plan-feature│───▶│  /init-impl  │───▶│   /review    │       │
-│  │   (설계)     │    │   (구현준비)  │    │   (검토)     │       │
+│  │   (Design)   │    │ (Impl Ready) │    │   (Review)   │       │
 │  └──────────────┘    └──────────────┘    └──────────────┘       │
 │         │                   │                   │                │
 │         ▼                   ▼                   ▼                │
 │  ┌──────────────────────────────────────────────────────┐       │
 │  │                    /status                            │       │
-│  │              (진행 상황 대시보드)                      │       │
+│  │              (Progress Dashboard)                     │       │
 │  └──────────────────────────────────────────────────────┘       │
 │                                                                  │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐       │
 │  │/health-check │    │  /generate-  │    │   Hooks      │       │
-│  │  (진단)      │    │    docs      │    │ (품질검증)   │       │
+│  │ (Diagnosis)  │    │    docs      │    │(Quality Val.)│       │
 │  └──────────────┘    └──────────────┘    └──────────────┘       │
 │                                                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## 구현 페이즈
+## Implementation Phases
 
-| 순위 | 페이즈 | 기능 | 노력 | 가치 | 상태 |
-|------|--------|------|------|------|------|
-| 1 | Phase 1 | Health Check Skill | 낮음 | 높음 | 미구현 |
-| 2 | Phase 2 | Status/Progress Skill | 중간 | 높음 | 미구현 |
-| 3 | Phase 3 | Review Agent Skill | 중간 | 높음 | 미구현 |
-| 4 | Phase 4 | Pre-commit Hook 강화 | 낮음 | 중간 | 미구현 |
-| 5 | Phase 5 | Auto Docs Generator | 높음 | 중간 | 미구현 |
+| Priority | Phase | Feature | Effort | Value | Status |
+|----------|-------|---------|--------|-------|--------|
+| 1 | Phase 1 | Health Check Skill | Low | High | Not Implemented |
+| 2 | Phase 2 | Status/Progress Skill | Medium | High | Not Implemented |
+| 3 | Phase 3 | Review Agent Skill | Medium | High | Not Implemented |
+| 4 | Phase 4 | Pre-commit Hook Enhancement | Low | Medium | Not Implemented |
+| 5 | Phase 5 | Auto Docs Generator | High | Medium | Not Implemented |
 
-## 기존 시스템 활용
+## Leveraging Existing System
 
-### 재사용 컴포넌트
-- `skills/plan-feature/` - Q&A 패턴, 템플릿 구조
-- `skills/init-impl/` - 체크리스트 생성 패턴
-- `hooks/slack-notify.sh` - Hook 실행 패턴
+### Reusable Components
+- `skills/plan-feature/` - Q&A pattern, template structure
+- `skills/init-impl/` - Checklist generation pattern
+- `hooks/slack-notify.sh` - Hook execution pattern
 
-### 신규 구현 컴포넌트
+### New Components
 ```
 skills/
-├── health-check/       # NEW: 프로젝트 진단
-├── status/             # NEW: 진행 상황 대시보드
-├── review/             # NEW: 페이즈 검토
-└── generate-docs/      # NEW: 자동 문서화
+├── health-check/       # NEW: Project diagnosis
+├── status/             # NEW: Progress dashboard
+├── review/             # NEW: Phase review
+└── generate-docs/      # NEW: Auto documentation
 
 hooks/
-└── pre-commit-quality.sh  # NEW: 품질 검증
+└── pre-commit-quality.sh  # NEW: Quality verification
 ```
 
-## 설계 원칙
+## Design Principles
 
-1. **단순함 유지** - 복잡한 의존성 없이 Markdown/YAML만으로 구성
-2. **워크플로우 집중** - 범용 도구가 아닌 설계→구현 흐름에 특화
-3. **점진적 채택** - 각 기능은 독립적으로 사용 가능
-4. **기존 호환** - 현재 skill들과 자연스럽게 연동
+1. **Keep it Simple** - Configure with only Markdown/YAML without complex dependencies
+2. **Workflow Focus** - Specialized for design→implementation flow, not a general-purpose tool
+3. **Gradual Adoption** - Each feature can be used independently
+4. **Backward Compatible** - Integrates naturally with existing skills
 
-## 문서 구조
+## Document Structure
 
 ```
 docs/plans/workflow-enhancement/
-├── 00_OVERVIEW.md          ← 현재 문서
-├── 01_HEALTH_CHECK.md      ← 프로젝트 진단 설계
-├── 02_STATUS.md            ← 진행 상황 대시보드 설계
-├── 03_REVIEW.md            ← 페이즈 검토 에이전트 설계
-├── 04_PRE_COMMIT_HOOK.md   ← 품질 검증 훅 설계
-└── 05_GENERATE_DOCS.md     ← 자동 문서화 설계
+├── 00_OVERVIEW.md          ← Current document
+├── 01_HEALTH_CHECK.md      ← Project diagnosis design
+├── 02_STATUS.md            ← Progress dashboard design
+├── 03_REVIEW.md            ← Phase review agent design
+├── 04_PRE_COMMIT_HOOK.md   ← Quality verification hook design
+└── 05_GENERATE_DOCS.md     ← Auto documentation design
 ```

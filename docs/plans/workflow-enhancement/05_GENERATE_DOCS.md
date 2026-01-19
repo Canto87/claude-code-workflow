@@ -1,42 +1,42 @@
 # Phase 5: Auto Docs Generator Skill
 
-> 구현 완료 후 자동 문서화
+> Automatic documentation after implementation
 
-## 목적
+## Purpose
 
-구현이 완료된 기능에 대해 자동으로 API 문서, 변경 로그, 아키텍처 다이어그램 등을
-생성하여 문서화 부담을 줄이고 일관성을 유지합니다.
+Automatically generate API documentation, changelogs, architecture diagrams, etc.
+for completed features to reduce documentation burden and maintain consistency.
 
-## 사용 시나리오
+## Usage Scenarios
 
 ```bash
-# 특정 기능 문서 생성
+# Generate docs for specific feature
 > /generate-docs user-auth
 
-# API 문서만 생성
+# Generate API docs only
 > /generate-docs user-auth --api-only
 
-# CHANGELOG 업데이트
+# Update CHANGELOG
 > /generate-docs --changelog
 
-# 전체 문서 재생성
+# Regenerate all docs
 > /generate-docs --all
 ```
 
-## 생성 문서 종류
+## Document Types
 
-### 1. API 문서 (API Documentation)
+### 1. API Documentation
 
 ```yaml
-source: 코드에서 추출
-  - HTTP 핸들러 함수
-  - OpenAPI/Swagger 어노테이션
-  - 요청/응답 타입 정의
+source: Extract from code
+  - HTTP handler functions
+  - OpenAPI/Swagger annotations
+  - Request/response type definitions
 
 output: docs/api/{feature}/README.md
 ```
 
-**예시 출력:**
+**Example Output:**
 
 ```markdown
 # User Auth API
@@ -45,7 +45,7 @@ output: docs/api/{feature}/README.md
 
 ### POST /api/auth/signup
 
-회원가입 API
+Signup API
 
 **Request Body:**
 ```json
@@ -76,18 +76,18 @@ output: docs/api/{feature}/README.md
 ...
 ```
 
-### 2. 변경 로그 (CHANGELOG)
+### 2. CHANGELOG
 
 ```yaml
 source:
-  - Git 커밋 히스토리
-  - 설계 문서 (00_OVERVIEW.md)
-  - PR 설명
+  - Git commit history
+  - Design documents (00_OVERVIEW.md)
+  - PR descriptions
 
-output: CHANGELOG.md (기존 파일에 추가)
+output: CHANGELOG.md (append to existing file)
 ```
 
-**예시 출력:**
+**Example Output:**
 
 ```markdown
 ## [Unreleased]
@@ -107,17 +107,17 @@ output: CHANGELOG.md (기존 파일에 추가)
 - Added rate limiting for auth endpoints
 ```
 
-### 3. 아키텍처 다이어그램 (Architecture Diagram)
+### 3. Architecture Diagram
 
 ```yaml
 source:
-  - 설계 문서 (System Architecture 섹션)
-  - 코드 구조 분석
+  - Design documents (System Architecture section)
+  - Code structure analysis
 
-output: docs/architecture/{feature}.md (Mermaid 다이어그램)
+output: docs/architecture/{feature}.md (Mermaid diagrams)
 ```
 
-**예시 출력:**
+**Example Output:**
 
 ```markdown
 # User Auth Architecture
@@ -174,17 +174,17 @@ sequenceDiagram
 ```
 ```
 
-### 4. 타입/모델 문서 (Type Documentation)
+### 4. Type/Model Documentation
 
 ```yaml
 source:
   - Go struct, TypeScript interface
-  - 데이터베이스 스키마
+  - Database schema
 
 output: docs/models/{feature}.md
 ```
 
-**예시 출력:**
+**Example Output:**
 
 ```markdown
 # User Auth Models
@@ -209,18 +209,18 @@ output: docs/models/{feature}.md
 | expires_at | time.Time | Token expiration |
 ```
 
-### 5. 사용 가이드 (Usage Guide)
+### 5. Usage Guide
 
 ```yaml
 source:
-  - 설계 문서
-  - API 문서
-  - 코드 예제
+  - Design documents
+  - API documentation
+  - Code examples
 
 output: docs/guides/{feature}.md
 ```
 
-**예시 출력:**
+**Example Output:**
 
 ```markdown
 # User Auth Usage Guide
@@ -260,28 +260,28 @@ curl http://localhost:8080/api/protected \
 ```
 ```
 
-## 파일 구조
+## File Structure
 
 ```
 skills/generate-docs/
-├── SKILL.md              # Skill 정의
-├── config.yaml           # 생성 설정
+├── SKILL.md              # Skill definition
+├── config.yaml           # Generation settings
 ├── extractors/
-│   ├── api.md            # API 추출 가이드
-│   ├── types.md          # 타입 추출 가이드
-│   └── changelog.md      # 변경 로그 규칙
+│   ├── api.md            # API extraction guide
+│   ├── types.md          # Type extraction guide
+│   └── changelog.md      # Changelog rules
 └── templates/
-    ├── api.md            # API 문서 템플릿
-    ├── changelog.md      # CHANGELOG 템플릿
-    ├── architecture.md   # 아키텍처 템플릿
-    ├── models.md         # 모델 문서 템플릿
-    └── guide.md          # 가이드 템플릿
+    ├── api.md            # API doc template
+    ├── changelog.md      # CHANGELOG template
+    ├── architecture.md   # Architecture template
+    ├── models.md         # Model doc template
+    └── guide.md          # Guide template
 ```
 
-## config.yaml 스키마
+## config.yaml Schema
 
 ```yaml
-# generate-docs skill 설정
+# generate-docs skill settings
 
 output:
   base_path: "docs"
@@ -300,7 +300,7 @@ generators:
   changelog:
     enabled: true
     format: "keepachangelog"  # keepachangelog | conventional
-    auto_categorize: true     # Added, Changed, Fixed 자동 분류
+    auto_categorize: true     # Auto-categorize as Added, Changed, Fixed
 
   architecture:
     enabled: true
@@ -316,9 +316,9 @@ generators:
   guide:
     enabled: true
     include_curl: true
-    include_sdk: false        # SDK 예제 포함 여부
+    include_sdk: false        # Include SDK examples
 
-# 언어별 설정
+# Language-specific settings
 language:
   go:
     handler_pattern: "func.*Handler.*http.ResponseWriter"
@@ -327,13 +327,13 @@ language:
     handler_pattern: "export.*async.*Request.*Response"
     interface_pattern: "export interface"
 
-# 소스 경로
+# Source paths
 sources:
   code: "internal"
   plans: "docs/plans"
 ```
 
-## SKILL.md 정의
+## SKILL.md Definition
 
 ```yaml
 ---
@@ -343,7 +343,7 @@ allowed-tools: Read, Write, Glob, Grep, Bash, Task
 ---
 ```
 
-## 실행 흐름
+## Execution Flow
 
 ```
 ┌─────────────────┐
@@ -353,37 +353,40 @@ allowed-tools: Read, Write, Glob, Grep, Bash, Task
          │
          ▼
 ┌─────────────────┐
-│ 1. 소스 분석    │
-│ - 설계 문서     │
-│ - 구현 코드     │
-│ - Git 히스토리  │
+│ 1. Source       │
+│    Analysis     │
+│ - Design docs   │
+│ - Impl code     │
+│ - Git history   │
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ 2. 정보 추출    │
-│ - API 엔드포인트│
-│ - 타입/모델     │
-│ - 변경 사항     │
+│ 2. Information  │
+│    Extraction   │
+│ - API endpoints │
+│ - Types/Models  │
+│ - Changes       │
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ 3. 템플릿 적용  │
-│ - 문서 생성     │
-│ - 다이어그램    │
+│ 3. Template     │
+│    Application  │
+│ - Generate docs │
+│ - Diagrams      │
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ 4. 파일 출력    │
+│ 4. File Output  │
 │ - docs/api/     │
 │ - CHANGELOG.md  │
 │ - docs/arch/    │
 └─────────────────┘
 ```
 
-## 출력 예시
+## Output Example
 
 ```
 ## 📚 Documentation Generated
@@ -419,23 +422,23 @@ allowed-tools: Read, Write, Glob, Grep, Bash, Task
 ```
 ```
 
-## 워크플로우 연동
+## Workflow Integration
 
 ```
-/plan-feature     /init-impl      개발          /review        /generate-docs
+/plan-feature     /init-impl      Development      /review        /generate-docs
      │                │             │              │                 │
      │                │             │              │                 │
      ▼                ▼             ▼              ▼                 ▼
-  설계 문서    →    체크리스트  →  코드 작성  →  품질 검토  →   문서 자동 생성
+  Design docs    →   Checklist  →  Code writing →  Quality rev. → Auto doc gen
      │                                                              │
      └──────────────────────────────────────────────────────────────┘
-                        문서 ↔ 코드 일관성 유지
+                        Document ↔ Code Consistency
 ```
 
-## 확장 가능성
+## Extensibility
 
-- **OpenAPI 출력**: Swagger UI 호환 문서 생성
-- **SDK 생성**: API 문서에서 SDK 코드 자동 생성
-- **다국어 지원**: 문서 자동 번역
-- **버전 관리**: API 버전별 문서 유지
-- **변경 감지**: 코드 변경 시 문서 자동 업데이트 알림
+- **OpenAPI Output**: Generate Swagger UI compatible docs
+- **SDK Generation**: Auto-generate SDK code from API docs
+- **Multi-language Support**: Auto-translate documentation
+- **Versioning**: Maintain docs per API version
+- **Change Detection**: Notify when code changes require doc updates

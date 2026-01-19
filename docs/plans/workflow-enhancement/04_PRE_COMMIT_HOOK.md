@@ -1,16 +1,16 @@
-# Phase 4: Pre-commit Hook 강화
+# Phase 4: Pre-commit Hook Enhancement
 
-> 커밋 전 품질 검증 자동화
+> Automated quality verification before commit
 
-## 목적
+## Purpose
 
-커밋 시점에 자동으로 품질 검사를 수행하여, 불완전하거나 품질이 낮은
-코드가 저장소에 들어가는 것을 방지합니다.
+Automatically perform quality checks at commit time to prevent incomplete
+or low-quality code from entering the repository.
 
-## 사용 시나리오
+## Usage Scenarios
 
 ```bash
-# Git commit 시 자동 실행
+# Automatically runs on git commit
 $ git commit -m "Add login feature"
 
 🔍 Running pre-commit checks...
@@ -22,22 +22,22 @@ $ git commit -m "Add login feature"
 Commit successful!
 ```
 
-## 검사 항목
+## Check Items
 
-### 1. 체크리스트 검증 (Checklist Validation)
+### 1. Checklist Validation
 
-현재 작업 중인 feature의 checklist.md를 확인하여,
-커밋하려는 변경사항과 관련된 체크리스트 항목이 완료되었는지 확인합니다.
+Checks the checklist.md of the feature currently being worked on to verify
+that checklist items related to the changes being committed are completed.
 
 ```yaml
 check: checklist_validation
 behavior:
-  - 변경된 파일과 관련된 체크리스트 항목 찾기
-  - 해당 항목이 [x]로 체크되어 있는지 확인
-  - 미완료 시 경고 (블로킹 아님)
+  - Find checklist items related to changed files
+  - Verify those items are checked with [x]
+  - Warning if incomplete (non-blocking)
 ```
 
-### 2. TODO/FIXME 검사
+### 2. TODO/FIXME Check
 
 ```yaml
 check: todo_comments
@@ -47,32 +47,32 @@ patterns:
   - "XXX"
   - "HACK"
 behavior:
-  - staged 파일에서 패턴 검색
-  - 발견 시 경고 출력 (블로킹 아님)
-  - --strict 모드에서는 블로킹
+  - Search patterns in staged files
+  - Output warning if found (non-blocking)
+  - Blocking in --strict mode
 ```
 
-### 3. 테스트 실행
+### 3. Test Execution
 
 ```yaml
 check: run_tests
 behavior:
-  - 변경된 파일과 관련된 테스트만 실행
-  - 실패 시 커밋 블로킹
-  - --skip-tests로 우회 가능
+  - Run only tests related to changed files
+  - Block commit on failure
+  - Can bypass with --skip-tests
 ```
 
-### 4. Lint 검사
+### 4. Lint Check
 
 ```yaml
 check: lint
 behavior:
-  - 프로젝트의 린터 실행 (eslint, golint 등)
-  - 에러 시 커밋 블로킹
-  - 경고는 출력만
+  - Run project linter (eslint, golint, etc.)
+  - Block commit on error
+  - Output warnings only
 ```
 
-### 5. 시크릿 검사
+### 5. Secrets Detection
 
 ```yaml
 check: secrets_detection
@@ -81,13 +81,13 @@ patterns:
   - Passwords in config
   - Private keys
 behavior:
-  - 발견 시 커밋 블로킹
-  - 절대 우회 불가
+  - Block commit if found
+  - Never bypassable
 ```
 
-## 출력 형식
+## Output Format
 
-### 모든 검사 통과
+### All Checks Pass
 
 ```
 🔍 Pre-commit Quality Check
@@ -103,7 +103,7 @@ behavior:
 All checks passed! Proceeding with commit.
 ```
 
-### 일부 경고
+### Some Warnings
 
 ```
 🔍 Pre-commit Quality Check
@@ -125,7 +125,7 @@ All checks passed! Proceeding with commit.
    Consider addressing these issues.
 ```
 
-### 블로킹 에러
+### Blocking Errors
 
 ```
 🔍 Pre-commit Quality Check
@@ -152,22 +152,22 @@ To skip tests (not recommended):
   git commit --no-verify
 ```
 
-## 파일 구조
+## File Structure
 
 ```
 hooks/
-├── pre-commit-quality.sh     # 메인 훅 스크립트
+├── pre-commit-quality.sh     # Main hook script
 ├── checks/
-│   ├── checklist.sh          # 체크리스트 검증
-│   ├── todo.sh               # TODO 검사
-│   ├── tests.sh              # 테스트 실행
-│   ├── lint.sh               # 린트 검사
-│   └── secrets.sh            # 시크릿 검사
+│   ├── checklist.sh          # Checklist validation
+│   ├── todo.sh               # TODO check
+│   ├── tests.sh              # Test execution
+│   ├── lint.sh               # Lint check
+│   └── secrets.sh            # Secrets detection
 └── config/
-    └── pre-commit.yaml       # 훅 설정
+    └── pre-commit.yaml       # Hook settings
 ```
 
-## pre-commit.yaml 설정
+## pre-commit.yaml Settings
 
 ```yaml
 # Pre-commit hook configuration
@@ -175,7 +175,7 @@ hooks/
 checks:
   checklist:
     enabled: true
-    blocking: false           # 경고만, 블로킹 안함
+    blocking: false           # Warning only, not blocking
     plans_path: "docs/plans"
 
   todo:
@@ -184,13 +184,13 @@ checks:
     patterns:
       - "TODO"
       - "FIXME"
-    strict_mode: false        # true면 블로킹
+    strict_mode: false        # Blocking if true
 
   tests:
     enabled: true
-    blocking: true            # 실패 시 블로킹
-    command: "go test ./..."  # 또는 npm test, pytest 등
-    timeout: 60               # 초
+    blocking: true            # Block on failure
+    command: "go test ./..."  # Or npm test, pytest, etc.
+    timeout: 60               # seconds
 
   lint:
     enabled: true
@@ -199,13 +199,13 @@ checks:
 
   secrets:
     enabled: true
-    blocking: true            # 항상 블로킹
+    blocking: true            # Always blocking
     patterns:
       - "AKIA[0-9A-Z]{16}"    # AWS Access Key
       - "sk-[a-zA-Z0-9]{48}"  # OpenAI API Key
       - "password\\s*=\\s*[\"'][^\"']+[\"']"
 
-# 파일 필터
+# File filters
 filters:
   include:
     - "*.go"
@@ -218,12 +218,12 @@ filters:
     - "node_modules/*"
 ```
 
-## 설치 방법
+## Installation
 
-### 자동 설치 (install.sh 확장)
+### Automatic Installation (install.sh extension)
 
 ```bash
-# install.sh에 추가
+# Add to install.sh
 install_pre_commit_hook() {
   local hook_path=".git/hooks/pre-commit"
 
@@ -242,18 +242,18 @@ install_pre_commit_hook() {
 }
 ```
 
-### 수동 설치
+### Manual Installation
 
 ```bash
-# 훅 복사
+# Copy hook
 cp hooks/pre-commit-quality.sh .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 
-# 또는 심볼릭 링크
+# Or create symbolic link
 ln -s ../../hooks/pre-commit-quality.sh .git/hooks/pre-commit
 ```
 
-## 훅 스크립트 구조
+## Hook Script Structure
 
 ```bash
 #!/bin/bash
@@ -261,7 +261,7 @@ ln -s ../../hooks/pre-commit-quality.sh .git/hooks/pre-commit
 
 set -e
 
-# 색상 정의
+# Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -273,31 +273,31 @@ echo "════════════════════════�
 WARNINGS=0
 ERRORS=0
 
-# 1. 체크리스트 검증
+# 1. Checklist validation
 source hooks/checks/checklist.sh
 if ! check_checklist; then
   ((WARNINGS++))
 fi
 
-# 2. TODO 검사
+# 2. TODO check
 source hooks/checks/todo.sh
 if ! check_todos; then
   ((WARNINGS++))
 fi
 
-# 3. 테스트 실행
+# 3. Test execution
 source hooks/checks/tests.sh
 if ! run_tests; then
   ((ERRORS++))
 fi
 
-# 4. 린트 검사
+# 4. Lint check
 source hooks/checks/lint.sh
 if ! run_lint; then
   ((ERRORS++))
 fi
 
-# 5. 시크릿 검사
+# 5. Secrets detection
 source hooks/checks/secrets.sh
 if ! check_secrets; then
   ((ERRORS++))
@@ -317,7 +317,7 @@ else
 fi
 ```
 
-## Claude Code settings.json 연동
+## Claude Code settings.json Integration
 
 ```json
 {
@@ -332,9 +332,9 @@ fi
 }
 ```
 
-## 확장 가능성
+## Extensibility
 
-- **husky 연동**: Node.js 프로젝트에서 husky와 통합
-- **커밋 메시지 검증**: conventional commits 형식 검사
-- **브랜치 보호**: 특정 브랜치 직접 커밋 방지
-- **파일 크기 제한**: 큰 파일 커밋 방지
+- **husky Integration**: Integrate with husky for Node.js projects
+- **Commit Message Validation**: Check conventional commits format
+- **Branch Protection**: Prevent direct commits to specific branches
+- **File Size Limit**: Prevent committing large files

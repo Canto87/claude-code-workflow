@@ -1,74 +1,74 @@
 # Phase 1: Health Check Skill
 
-> 프로젝트 설정 진단 및 최적화 제안
+> Project configuration diagnosis and optimization suggestions
 
-## 목적
+## Purpose
 
-Claude Code 프로젝트의 설정 상태를 점검하고, 누락된 설정이나 잠재적 문제를 사전에 발견합니다.
+Check the configuration status of Claude Code projects and discover missing settings or potential issues in advance.
 
-## 사용 시나리오
+## Usage Scenarios
 
 ```bash
-# 프로젝트 시작 시
+# At project start
 > /health-check
 
-# 새 팀원 온보딩 시
+# When onboarding new team members
 > /health-check --verbose
 
-# CI/CD 파이프라인에서
+# In CI/CD pipelines
 > /health-check --ci
 ```
 
-## 검사 항목
+## Check Items
 
-### 1. 필수 파일 검사 (Required Files)
+### 1. Required Files
 
-| 파일 | 설명 | 심각도 |
-|------|------|--------|
-| `.claude/settings.json` | Claude Code 설정 | 🔴 error |
-| `CLAUDE.md` | 프로젝트 지침 | 🟡 warning |
-| `.gitignore` | Git 제외 규칙 | 🟡 warning |
-| `README.md` | 프로젝트 설명 | 🟢 info |
+| File | Description | Severity |
+|------|-------------|----------|
+| `.claude/settings.json` | Claude Code settings | 🔴 error |
+| `CLAUDE.md` | Project guidelines | 🟡 warning |
+| `.gitignore` | Git exclude rules | 🟡 warning |
+| `README.md` | Project description | 🟢 info |
 
-### 2. 디렉토리 구조 검사 (Directory Structure)
+### 2. Directory Structure
 
-| 디렉토리 | 설명 | 심각도 |
-|----------|------|--------|
-| `.claude/commands/` | 커스텀 명령어 | 🟢 info |
-| `docs/plans/` | 설계 문서 | 🟢 info |
+| Directory | Description | Severity |
+|-----------|-------------|----------|
+| `.claude/commands/` | Custom commands | 🟢 info |
+| `docs/plans/` | Design documents | 🟢 info |
 
-### 3. 설정 유효성 검사 (Settings Validation)
+### 3. Settings Validation
 
 ```yaml
-# .claude/settings.json 검사 항목
+# .claude/settings.json check items
 checks:
-  - JSON 문법 유효성
-  - permissions.allow 배열 존재
-  - permissions.deny 배열 존재
-  - hooks 설정 유효성
+  - JSON syntax validity
+  - permissions.allow array exists
+  - permissions.deny array exists
+  - hooks configuration validity
 ```
 
-### 4. Hook 검사 (Hook Validation)
+### 4. Hook Validation
 
 ```yaml
 hooks:
-  - 실행 권한 (chmod +x)
-  - shebang 존재 (#!/bin/bash 등)
-  - 참조된 명령어 존재
+  - Execution permission (chmod +x)
+  - Shebang exists (#!/bin/bash etc.)
+  - Referenced commands exist
 ```
 
-### 5. Skill 설정 검사 (Skill Validation)
+### 5. Skill Validation
 
 ```yaml
 skills:
-  - SKILL.md 존재
-  - config.yaml 문법 유효성
-  - 필수 필드 존재 (name, description)
+  - SKILL.md exists
+  - config.yaml syntax validity
+  - Required fields exist (name, description)
 ```
 
-## 출력 형식
+## Output Format
 
-### 정상 출력
+### Normal Output
 
 ```
 ## 🏥 Health Check Report
@@ -95,7 +95,7 @@ skills:
 - Add `docs/plans/` for design documents
 ```
 
-### 문제 발견 시
+### When Issues Found
 
 ```
 ## 🏥 Health Check Report
@@ -129,24 +129,24 @@ skills:
 - No design documents found (optional)
 ```
 
-## 파일 구조
+## File Structure
 
 ```
 skills/health-check/
-├── SKILL.md              # Skill 정의
-├── config.yaml           # 검사 항목 설정
+├── SKILL.md              # Skill definition
+├── config.yaml           # Check item settings
 └── templates/
-    └── report.md         # 리포트 템플릿
+    └── report.md         # Report template
 ```
 
-## config.yaml 스키마
+## config.yaml Schema
 
 ```yaml
-# 검사 설정
+# Check settings
 checks:
   required_files:
-    - path: string        # 파일 경로
-      description: string # 설명
+    - path: string        # File path
+      description: string # Description
       severity: error|warning|info
 
   required_dirs:
@@ -157,7 +157,7 @@ checks:
   settings:
     validate_json: boolean
     required_keys:
-      - key: string       # JSON 경로 (예: permissions.allow)
+      - key: string       # JSON path (e.g., permissions.allow)
         severity: error|warning|info
 
   hooks:
@@ -169,7 +169,7 @@ checks:
     check_config_yaml: boolean
 ```
 
-## SKILL.md 정의
+## SKILL.md Definition
 
 ```yaml
 ---
@@ -179,15 +179,15 @@ allowed-tools: Read, Glob, Bash
 ---
 ```
 
-## 구현 우선순위
+## Implementation Priority
 
-1. **필수 파일 검사** - 가장 기본적인 검사
-2. **설정 JSON 유효성** - 문법 오류 발견
-3. **Hook 실행 권한** - 흔한 실수 방지
-4. **리포트 출력** - 명확한 피드백
+1. **Required files check** - Most basic check
+2. **Settings JSON validity** - Syntax error detection
+3. **Hook execution permission** - Prevent common mistakes
+4. **Report output** - Clear feedback
 
-## 확장 가능성
+## Extensibility
 
-- `--fix` 옵션: 자동 수정 (예: chmod +x)
-- `--json` 옵션: CI/CD용 JSON 출력
-- `--watch` 옵션: 파일 변경 감시
+- `--fix` option: Auto-fix (e.g., chmod +x)
+- `--json` option: JSON output for CI/CD
+- `--watch` option: File change monitoring
