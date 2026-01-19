@@ -6,8 +6,8 @@ Reusable feature planning and implementation skills for Claude Code.
 
 | Skill | Description | Trigger Example |
 |-------|-------------|-----------------|
-| **plan-feature** | Q&A-based phase-by-phase design document generation | "Design an auth feature" |
-| **init-impl** | Generate checklists and commands from design docs | "Prepare to implement auth" |
+| **plan-feature** | Q&A-based design with codebase analysis and risk assessment | "Design an auth feature" |
+| **init-impl** | Generate checklists/commands from design docs + cleanup mode | "Prepare to implement auth" |
 | **health-check** | Diagnose project configuration and suggest optimizations | "Check project health" |
 | **status** | Display implementation progress dashboard | `/status user-auth` |
 | **review** | Review completed phases for quality and consistency | `/review user-auth phase-2` |
@@ -166,6 +166,10 @@ Each skill is completely independent:
 │   ├── SKILL.md               # Skill definition
 │   ├── config.yaml            # Skill-specific config
 │   ├── questions.md           # Q&A template
+│   ├── docs/                   # Reference documentation
+│   │   ├── agent-architecture.md
+│   │   ├── state-management.md
+│   │   └── workflow.md
 │   └── templates/
 │
 ├── init-impl/
@@ -217,11 +221,15 @@ Each skill is completely independent:
 
 | Option | Description | Default |
 |--------|-------------|---------|
+| `project.name` | Project name | - |
 | `project.language` | Programming language | `other` |
 | `paths.source` | Source code path | `src` |
 | `paths.plans` | Design docs output path | `docs/plans` |
+| `paths.apps` | Application directories (monorepo) | `[]` |
 | `integrations` | Available system integrations | `[]` |
 | `storage` | Storage options | SQLite, etc. |
+
+> See `config.yaml` for all available options.
 
 ### init-impl
 
@@ -232,6 +240,9 @@ Each skill is completely independent:
 | `paths.commands` | Commands output path | `.claude/commands` |
 | `build.command` | Build command | - |
 | `build.test` | Test command | - |
+| `build.run` | Run command | - |
+
+> See `config.yaml` for all available options.
 
 ### health-check
 
@@ -243,6 +254,8 @@ Each skill is completely independent:
 | `checks.hooks.executable` | Check hook file permissions | `true` |
 | `report.show_passing` | Show passing checks | `true` |
 
+> See `config.yaml` for all available options.
+
 ### status
 
 | Option | Description | Default |
@@ -253,6 +266,8 @@ Each skill is completely independent:
 | `feature_detection.auto_detect` | Auto-detect current feature | `true` |
 | `overview.sort_by` | Sort order | `last_updated` |
 
+> See `config.yaml` for all available options.
+
 ### review
 
 | Option | Description | Default |
@@ -262,6 +277,8 @@ Each skill is completely independent:
 | `focus_modes` | Focus mode definitions | `quality`, `security`, etc. |
 | `report.show_code_snippets` | Show code snippets | `true` |
 
+> See `config.yaml` for all available options.
+
 ### generate-docs
 
 | Option | Description | Default |
@@ -270,6 +287,8 @@ Each skill is completely independent:
 | `output.changelog` | Changelog file path | `CHANGELOG.md` |
 | `generators.*.enabled` | Enable per generator | `true` |
 | `mermaid.theme` | Mermaid diagram theme | `default` |
+
+> See `config.yaml` for all available options.
 
 ### slack-notify
 
@@ -289,6 +308,8 @@ Each skill is completely independent:
 | `branch.default_base` | Default base branch for new branches | `main` |
 | `safety.confirm_remove` | Require confirmation before removing | `true` |
 | `safety.check_uncommitted` | Check for uncommitted changes | `true` |
+
+> See `config.yaml` for all available options.
 
 **Subcommands:**
 
