@@ -14,6 +14,8 @@ Reusable feature planning and implementation skills for Claude Code.
 | **generate-docs** | Generate API docs, changelog, architecture diagrams | `/generate-docs user-auth` |
 | **slack-notify** | Slack notification configuration (built into each skill) | Configure `webhook_url` only |
 | **worktree** | Git worktree management for parallel branch development | `/worktree-add feature/auth` |
+| **supervisor** | QA pipeline orchestrator (implement → review → validate) | `/supervisor user-auth phase1` |
+| **validate** | Artifact and implementation validation | `/validate user-auth phase1` |
 
 ## Quick Start
 
@@ -25,10 +27,24 @@ Reusable feature planning and implementation skills for Claude Code.
 curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash
 ```
 
-**Selective Installation**
+Options:
+- `--skills=X,Y`: Install specific skills only
+- `--agents`: Install all agents (advanced feature)
+- `--agents=X,Y`: Install specific agents only
+- `--with-supervisor`: Install skills + agents + supervisor (full QA pipeline)
+- `--interactive`: Interactive selection menu
+- `--yes`: Skip confirmation prompt (for CI/CD)
+
+**Examples:**
 ```bash
 # Install specific skills only
-curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash -s -- --skills=plan-feature,init-impl
+curl -fsSL ... | bash -s -- --skills=plan-feature,init-impl
+
+# Install with all agents (advanced)
+curl -fsSL ... | bash -s -- --agents
+
+# Install full QA pipeline
+curl -fsSL ... | bash -s -- --with-supervisor
 
 # List available skills
 curl -fsSL https://raw.githubusercontent.com/Canto87/claude-code-workflow/main/install.sh | bash -s -- --list
@@ -47,6 +63,9 @@ cp -r /tmp/claude-code-workflow/skills/_shared .claude/skills/
 cp -r /tmp/claude-code-workflow/skills/plan-feature .claude/skills/
 cp -r /tmp/claude-code-workflow/skills/init-impl .claude/skills/
 
+# Copy agents (optional, for advanced features)
+cp -r /tmp/claude-code-workflow/agents .claude/
+
 # Cleanup
 rm -rf /tmp/claude-code-workflow
 ```
@@ -59,10 +78,21 @@ rm -rf /tmp/claude-code-workflow
 | `init-impl` | Generate checklists and commands |
 | `health-check` | Diagnose project configuration |
 | `status` | Display implementation progress dashboard |
-| `review` | Code quality review agent |
+| `review` | Code quality review skill |
 | `generate-docs` | Auto documentation generator |
 | `slack-notify` | Slack notification configuration |
 | `worktree` | Git worktree management |
+| `supervisor` | QA pipeline orchestrator |
+| `validate` | Artifact and implementation validation |
+
+**Available Agents (Advanced):**
+| Agent | Description |
+|-------|-------------|
+| `code-edit` | Single-task code modification agent |
+| `auto-impl` | Phase automation orchestrator |
+| `validate` | Dual-mode verification agent |
+| `code-analyze` | Read-only codebase analysis |
+| `code-review` | Code quality evaluation agent |
 
 ### Auto-Configuration (Recommended)
 
@@ -74,9 +104,171 @@ After installation, ask Claude:
 
 Claude will analyze your project structure and update config.yaml files automatically.
 
-### Manual Configuration
+## Workflow
 
-Edit `config.yaml` in each skill folder for your project:
+### Simple Workflow (Skills Only)
+
+```
+[health-check] Verify project setup (optional)
+    ↓
+Idea
+    ↓
+[plan-feature] Gather requirements via Q&A
+    ↓
+📁 docs/plans/{feature}/
+├── 00_OVERVIEW.md
+├── 01_PHASE1.md
+└── ...
+    ↓
+[init-impl] Parse design documents
+    ↓
+📁 docs/checklists/{feature}.md      # Checklist
+📁 .claude/commands/{feature}/       # Slash commands
+    ↓
+Implementation with /phase1, /phase2, ...
+    ↓
+[status] Check progress
+    ↓
+[review] Quality review per phase
+    ↓
+[generate-docs] Auto-generate docs
+    ↓
+Done! 🎉
+```
+
+### Advanced Workflow (With Agents)
+
+For larger projects needing automated QA:
+
+```
+[plan-feature] Design
+    ↓
+[init-impl] Setup
+    ↓
+[supervisor] Automated QA Pipeline
+    │
+    ├── IMPLEMENT (auto-impl → code-edit)
+    │
+    ├── REVIEW (code-review)
+    │       └── Gate: Score 7+ to pass
+    │
+    └── VALIDATE (validate)
+            └── Gate: Score 7+ to pass
+    ↓
+Done! 🎉
+```
+
+See [docs/AGENTS.md](docs/AGENTS.md) for the full agent system guide.
+
+---
+
+## Advanced: Agent System
+
+Agents provide automated code modification, analysis, and quality assurance.
+
+### Agent Hierarchy
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    SKILL LAYER                              │
+│  ┌──────────────┐  ┌──────────┐  ┌──────────────────────┐  │
+│  │ plan-feature │  │ init-impl│  │      supervisor      │  │
+│  │   (design)   │  │ (setup)  │  │  (QA orchestrator)   │  │
+│  └──────────────┘  └──────────┘  └──────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    AGENT LAYER                              │
+│  ┌────────────┐  ┌────────────┐  ┌────────────────────┐    │
+│  │ auto-impl  │──│ code-edit  │  │    code-analyze    │    │
+│  │(orchestr.) │  │ (worker)   │  │    (read-only)     │    │
+│  └────────────┘  └────────────┘  └────────────────────┘    │
+│  ┌────────────┐  ┌────────────┐                            │
+│  │code-review │  │  validate  │                            │
+│  │(evaluator) │  │(validator) │                            │
+│  └────────────┘  └────────────┘                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Supervisor Pipeline
+
+The supervisor skill chains agents with score-based gates:
+
+```
+IMPLEMENT → REVIEW → VALIDATE
+                │
+         Gate: 7+ pass
+         5-6: retry
+         <5: reject
+```
+
+### Delegation Rules
+
+Add to your CLAUDE.md for task routing:
+
+| Task Type | Tool | Reason |
+|-----------|------|--------|
+| Code modification (3+ files) | `code-edit` agent | Context savings |
+| Phase implementation | `auto-impl` agent | Orchestration |
+| Documentation | Direct Write/Edit | No overhead |
+| Analysis | `code-analyze` agent | Read-only |
+| Quality check | `code-review` agent | Evaluation |
+| Full QA | `supervisor` skill | Pipeline |
+
+**Rule**: When modifying 3+ code files, always delegate to a subagent.
+
+### Agent Installation
+
+```bash
+# All agents
+./install.sh --agents
+
+# Specific agents
+./install.sh --agents=code-edit,code-review
+
+# Full QA pipeline
+./install.sh --with-supervisor
+```
+
+See:
+- [docs/AGENTS.md](docs/AGENTS.md) - Agent system guide
+- [docs/DELEGATION.md](docs/DELEGATION.md) - Task delegation rules
+- [examples/advanced-workflow.md](examples/advanced-workflow.md) - Advanced usage
+
+---
+
+## Project Structure
+
+```
+.claude/
+├── skills/
+│   ├── _shared/              # Shared templates
+│   ├── plan-feature/         # Design generation
+│   ├── init-impl/            # Implementation setup
+│   ├── health-check/         # Project diagnostics
+│   ├── status/               # Progress dashboard
+│   ├── review/               # Quality review
+│   ├── generate-docs/        # Documentation generator
+│   ├── slack-notify/         # Notifications
+│   ├── worktree/             # Git worktree management
+│   ├── supervisor/           # QA pipeline (advanced)
+│   └── validate/             # Validation skill (advanced)
+│
+├── agents/                   # (with --agents flag)
+│   ├── code-edit.md          # Code modification
+│   ├── auto-impl.md          # Phase orchestration
+│   ├── validate.md           # Verification
+│   ├── code-analyze.md       # Analysis
+│   └── code-review.md        # Quality evaluation
+│
+└── hooks/
+    └── pre-commit-quality.sh # Pre-commit checks
+```
+
+## Configuration
+
+### Quick Config
 
 **plan-feature/config.yaml:**
 ```yaml
@@ -87,10 +279,6 @@ project:
 paths:
   source: "internal"
   plans: "docs/plans"
-
-integrations:
-  - label: "Database"
-    path: "internal/database"
 ```
 
 **init-impl/config.yaml:**
@@ -105,246 +293,37 @@ build:
   test: "go test ./..."
 ```
 
-### Usage
-
-Ask Claude:
-
-```
-"Design a user authentication feature"
-```
-
-→ Creates design documents in `docs/plans/user_auth/`
-
-```
-"Prepare to implement user auth"
-```
-
-→ Creates `docs/checklists/user-auth.md` + `.claude/commands/user-auth/`
-
-## Workflow
-
-```
-[health-check] Verify project setup (optional)
-    ↓
-Idea
-    ↓
-[plan-feature] Gather requirements via Q&A
-    ↓                              ┌─────────────────┐
-📁 docs/plans/{feature}/           │  Slack notify   │
-├── 00_OVERVIEW.md                 │  (built-in)     │
-├── 01_PHASE1.md                   └─────────────────┘
-└── ...
-    ↓
-[init-impl] Parse design documents
-    ↓
-📁 docs/checklists/{feature}.md      # Checklist
-📁 .claude/commands/{feature}/       # Slash commands
-├── phase1.md    → /phase1
-└── ...
-    ↓
-Implementation with /phase1, /phase2, ...
-    ↓
-[status] Check progress             # /status {feature}
-    ↓
-[review] Quality review per phase   # /review {feature} phase-N
-    ↓
-[generate-docs] Auto-generate docs  # /generate-docs {feature}
-    ↓
-Done! 🎉
-```
-
-## Independent Skill Structure
-
-Each skill is completely independent:
-
-```
-.claude/skills/
-├── _shared/
-│   └── notify.md              # Shared notification templates
-│
-├── plan-feature/
-│   ├── SKILL.md               # Skill definition
-│   ├── config.yaml            # Skill-specific config
-│   ├── questions.md           # Q&A template
-│   ├── docs/                   # Reference documentation
-│   │   ├── agent-architecture.md
-│   │   ├── state-management.md
-│   │   └── workflow.md
-│   └── templates/
-│
-├── init-impl/
-│   ├── SKILL.md               # Skill definition
-│   ├── config.yaml            # Skill-specific config
-│   └── templates/
-│
-├── health-check/
-│   ├── SKILL.md               # Skill definition
-│   ├── config.yaml            # Check rules config
-│   └── templates/
-│
-├── status/
-│   ├── SKILL.md               # Skill definition
-│   ├── config.yaml            # Display settings
-│   └── templates/
-│
-├── review/
-│   ├── SKILL.md               # Skill definition
-│   ├── config.yaml            # Review categories
-│   └── templates/
-│
-├── generate-docs/
-│   ├── SKILL.md               # Skill definition
-│   ├── config.yaml            # Generator settings
-│   └── templates/
-│
-├── slack-notify/
-│   ├── SKILL.md               # Configuration guide
-│   └── config.yaml            # webhook_url only
-│
-└── worktree/
-    ├── SKILL.md               # Skill definition
-    ├── config.yaml            # Worktree settings
-    └── README.md              # Quick reference
-
-.claude/hooks/
-└── pre-commit-quality.sh      # Pre-commit quality checks
-```
-
-- One folder = one complete skill
-- Clean skill addition/removal
-- No config conflicts
-- Slack notifications are built into each skill (no hook needed)
-
-## Configuration Options
-
-### plan-feature
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `project.name` | Project name | - |
-| `project.language` | Programming language | `other` |
-| `paths.source` | Source code path | `src` |
-| `paths.plans` | Design docs output path | `docs/plans` |
-| `paths.apps` | Application directories (monorepo) | `[]` |
-| `integrations` | Available system integrations | `[]` |
-| `storage` | Storage options | SQLite, etc. |
-
-> See `config.yaml` for all available options.
-
-### init-impl
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `paths.plans` | Design docs input path | `docs/plans` |
-| `paths.checklists` | Checklist output path | `docs/checklists` |
-| `paths.commands` | Commands output path | `.claude/commands` |
-| `build.command` | Build command | - |
-| `build.test` | Test command | - |
-| `build.run` | Run command | - |
-
-> See `config.yaml` for all available options.
-
-### health-check
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `checks.required_files` | Required files list with severity | `.claude/settings.json`, etc. |
-| `checks.required_dirs` | Required directories list | `.claude/commands`, etc. |
-| `checks.settings.validate_json` | Validate JSON syntax | `true` |
-| `checks.hooks.executable` | Check hook file permissions | `true` |
-| `report.show_passing` | Show passing checks | `true` |
-
-> See `config.yaml` for all available options.
-
-### status
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `paths.plans` | Design docs path | `docs/plans` |
-| `paths.checklist_file` | Checklist filename | `checklist.md` |
-| `display.progress_bar.width` | Progress bar width | `20` |
-| `feature_detection.auto_detect` | Auto-detect current feature | `true` |
-| `overview.sort_by` | Sort order | `last_updated` |
-
-> See `config.yaml` for all available options.
-
-### review
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `categories.*.enabled` | Enable per category | `true` |
-| `categories.*.weight` | Score weight (%) | varies |
-| `focus_modes` | Focus mode definitions | `quality`, `security`, etc. |
-| `report.show_code_snippets` | Show code snippets | `true` |
-
-> See `config.yaml` for all available options.
-
-### generate-docs
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `output.base_path` | Documentation output path | `docs` |
-| `output.changelog` | Changelog file path | `CHANGELOG.md` |
-| `generators.*.enabled` | Enable per generator | `true` |
-| `mermaid.theme` | Mermaid diagram theme | `default` |
-
-> See `config.yaml` for all available options.
-
-### slack-notify
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `webhook_url` | Slack Incoming Webhook URL | - (required) |
-| `channel` | Target Slack channel (informational) | `#claude-notifications` |
-
-> **Note:** Notifications are now built into each skill. Just configure `webhook_url` - no hooks or `target_skills` needed.
-
-### worktree
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `worktree.base_dir` | Base directory for new worktrees | `..` |
-| `worktree.naming_pattern` | Directory naming pattern | `{branch}` |
-| `branch.default_base` | Default base branch for new branches | `main` |
-| `safety.confirm_remove` | Require confirmation before removing | `true` |
-| `safety.check_uncommitted` | Check for uncommitted changes | `true` |
-
-> See `config.yaml` for all available options.
-
-**Subcommands:**
-
-| Command | Description |
-|---------|-------------|
-| `/worktree-list` | List all worktrees with status |
-| `/worktree-add [branch]` | Create worktree for branch |
-| `/worktree-add -b [new]` | Create new branch and worktree |
-| `/worktree-remove [path]` | Remove worktree safely |
-| `/worktree-info` | Show current worktree info |
-| `/worktree-switch [path]` | Switch to another worktree |
-
-**Pre-commit Hook (Optional):**
-
-Add to `.claude/settings.local.json` for quality checks before commits:
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/pre-commit-quality.sh \"$TOOL_INPUT\""
-          }
-        ]
-      }
-    ]
-  }
-}
+**supervisor/config.yaml:** (if using agents)
+```yaml
+gates:
+  review:
+    pass_threshold: 7
+    max_retries: 2
+  validate:
+    pass_threshold: 7
+    max_retries: 1
 ```
 
 For detailed configuration: [docs/CONFIGURATION.md](docs/CONFIGURATION.md)
-For hooks setup: [docs/HOOKS.md](docs/HOOKS.md)
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [CONFIGURATION.md](docs/CONFIGURATION.md) | Detailed config options |
+| [CUSTOMIZATION.md](docs/CUSTOMIZATION.md) | Customizing skills |
+| [HOOKS.md](docs/HOOKS.md) | Pre-commit hooks setup |
+| [AGENTS.md](docs/AGENTS.md) | Agent system guide |
+| [DELEGATION.md](docs/DELEGATION.md) | Task delegation rules |
+
+## Examples
+
+| Example | Description |
+|---------|-------------|
+| [settings.json](examples/settings.json) | Permissions template |
+| [CLAUDE.md.example](examples/CLAUDE.md.example) | Project config template |
+| [advanced-workflow.md](examples/advanced-workflow.md) | Agent workflow guide |
+| [supervisor-report.md](examples/sample-output/supervisor-report.md) | Pipeline output example |
 
 ## Contributing
 
