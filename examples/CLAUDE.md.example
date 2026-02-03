@@ -1,0 +1,116 @@
+# Project Name
+
+> **AI Tool Reference Document**
+> - Installation Guide: [docs/INSTALL.md](./docs/INSTALL.md)
+> - Quick Start: [README.md](./README.md)
+
+Brief project description here.
+
+## Quick Reference
+
+- **Language**: TypeScript / Go / Python / etc.
+- **Architecture**: [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
+- **API Reference**: [docs/API.md](./docs/API.md)
+
+## Project Structure
+
+```
+project/
+├── src/                # Source code
+│   ├── api/           # API handlers
+│   ├── services/      # Business logic
+│   └── utils/         # Utilities
+├── tests/             # Test files
+├── docs/              # Documentation
+│   ├── plans/         # Feature design documents
+│   └── checklists/    # Implementation checklists
+└── .claude/           # Claude Code configuration
+    ├── settings.json  # Permissions
+    ├── skills/        # Custom skills
+    ├── agents/        # Custom agents
+    └── commands/      # Slash commands
+```
+
+## Commands
+
+```bash
+# Build
+npm run build        # or: go build ./...
+
+# Test
+npm test             # or: go test ./...
+
+# Development
+npm run dev          # Start dev server
+```
+
+## Code Style
+
+- Error handling: [describe project-specific patterns]
+- Logging: [describe logging conventions]
+- Naming: [describe naming conventions]
+
+### Git Commits
+- Follow Conventional Commits: `feat`, `fix`, `refactor`, etc.
+- Include scope when relevant: `feat(api): add user endpoint`
+
+## Key Patterns
+
+### State Management
+[Describe how state is managed in your project]
+
+### Error Handling
+```typescript
+// Example error handling pattern
+try {
+  await operation();
+} catch (error) {
+  logger.error('Operation failed', { error });
+  throw new AppError('OPERATION_FAILED', error);
+}
+```
+
+### Logging
+```typescript
+// Example logging pattern
+logger.info('MODULE', 'Processing request', { requestId });
+```
+
+## Important Rules
+
+1. [Rule 1 - e.g., "Always validate user input"]
+2. [Rule 2 - e.g., "Use async/await, not callbacks"]
+3. [Rule 3 - e.g., "Write tests for all public functions"]
+
+---
+
+## Workflow
+
+1. **Start with plan mode** — Check `docs/CHECKLIST.md` for current phase
+2. For large features, use `/plan-feature` to generate Phase-based design docs
+3. After plan approval, follow the implementation rules below
+4. Run `/test` after each phase completion
+
+### Plan Mode → Implementation Rules
+
+When transitioning from plan mode to implementation, choose the appropriate tool based on task type:
+
+| Task Type | Tool | Reason |
+|-----------|------|--------|
+| **Code modification** (3+ files) | `code-edit` agent | Save main context, autonomous file handling |
+| **Multi-file changes** (Phase) | `auto-impl` agent | Phase task orchestration with checkpoints |
+| **Documentation changes** | Direct Write/Edit | No agent overhead for markdown |
+| **Config file changes** | Direct Edit | Simple changes don't need agents |
+| **Code analysis/research** | `code-analyze` agent | Read-only exploration |
+| **Code quality check** | `code-review` agent | Pre-merge evaluation |
+| **Full QA pipeline** | `supervisor` skill | Implement → Review → Validate chain |
+
+**Principle**: When modifying 3+ code files, always delegate to a subagent.
+
+### Document Updates
+
+Update documentation after:
+- Adding new files/components
+- Changing external services (ports, APIs)
+- Completing a Phase
+- Architecture changes

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p .claude/commands/**)",
+      "Bash(mkdir -p .claude/agents/**)",
+      "Edit(/docs/checklists/*.md)",
+      "Edit(/.claude/commands/**/status.md)",
+      "Edit(/.claude/commands/**/phase*.md)",
+      "Write(/docs/checklists/*.md)",
+      "Write(/.claude/commands/**/status.md)",
+      "Write(/.claude/commands/**/phase*.md)",
+      "Write(/.claude/agents/*.md)",
+      "Bash(mkdir -p .plan-feature/**)",
+      "Write(/.plan-feature/**/*.md)",
+      "Edit(/.plan-feature/**/*.md)",
+      "Write(/docs/api/**/*.md)",
+      "Edit(/CHANGELOG.md)"
+    ]
+  }
+}
