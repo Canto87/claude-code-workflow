@@ -214,3 +214,23 @@ After successful document generation, send Slack notification if configured:
 | `/status` | Check implementation progress | During implementation |
 | `/review` | Quality review | After completing each phase |
 | `/generate-docs` | Auto-generate documentation | After feature implementation is complete |
+
+---
+
+## Tips: Using code-analyze Agent
+
+If you have agents installed, the `code-analyze` agent can help during the Codebase Analysis step (Step 3):
+
+```
+"Analyze the payment module architecture for the new refund feature"
+```
+
+The agent provides:
+- **architecture** mode: Component relationships, data flow
+- **implementation** mode: Core logic, error handling
+- **change-impact** mode: Files affected, modification order
+- **pattern** mode: Existing conventions to follow
+
+This can supplement the automatic codebase analysis with deeper insights, especially for complex features.
+
+See [docs/AGENTS.md](../../docs/AGENTS.md) for agent details.

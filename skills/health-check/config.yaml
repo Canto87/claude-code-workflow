@@ -68,6 +68,7 @@ checks:
     directories:
       - "skills"
       - ".claude/commands"
+      - ".claude/skills"
     required_files:
       - "SKILL.md"          # or just .md for commands
     optional_files:
@@ -75,6 +76,20 @@ checks:
     frontmatter_required:
       - "name"
       - "description"
+
+  # Agent validation (optional, for advanced setups)
+  agents:
+    directory: ".claude/agents"
+    file_pattern: "*.md"
+    frontmatter_required:
+      - "name"
+      - "description"
+      - "tools"
+    optional_frontmatter:
+      - "model"
+      - "permissionMode"
+      - "disallowedTools"
+    severity: info  # Agents are optional, so only info level
 
 # Severity definitions
 severity_levels:

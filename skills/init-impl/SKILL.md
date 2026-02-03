@@ -184,3 +184,29 @@ After successful generation, send Slack notification if configured:
 | `/review` | Quality review | After completing each phase |
 | `/generate-docs` | Auto-generate documentation | After all phases are complete |
 | `/health-check` | Project setup verification | If experiencing issues |
+
+---
+
+## Next Steps: Automated Implementation
+
+After init-impl generates checklists and commands, you have two options:
+
+### Option 1: Manual Implementation (Default)
+Implement each phase manually using the generated slash commands:
+```
+/{feature}-phase1  →  /{feature}-phase2  →  ...
+```
+
+### Option 2: Automated QA Pipeline (Advanced)
+If you have agents installed (`./install.sh --with-supervisor`), use the supervisor skill for automated implementation with quality gates:
+
+```
+/supervisor {feature} phase1
+```
+
+This runs:
+1. **IMPLEMENT** - auto-impl agent executes Phase tasks via code-edit
+2. **REVIEW** - code-review agent evaluates code quality (7+ to pass)
+3. **VALIDATE** - validate agent checks Acceptance Criteria (7+ to pass)
+
+See [docs/AGENTS.md](../../docs/AGENTS.md) for more information.

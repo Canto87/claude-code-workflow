@@ -259,3 +259,21 @@ After review completion, send Slack notification if configured:
 - `/status` → Check progress before review
 - `/init-impl` → Created the checklist being reviewed
 - `/generate-docs` → Generate docs after approval
+
+---
+
+## Skill vs Agent: When to Use Which
+
+| | `/review` Skill | `code-review` Agent |
+|---|---|---|
+| **Invocation** | `/review feature phase` | Natural language or Task tool |
+| **Focus** | Phase/feature completion review | Code quality evaluation |
+| **Context** | Design docs + checklist | Changed files + project patterns |
+| **Output** | Approval verdict | 10-point score report |
+| **Best For** | Phase milestone checks | Pre-merge code quality |
+| **Use With** | Manual workflow | supervisor pipeline |
+
+**Recommendation:**
+- Use `/review` skill for **phase completion checks** (design match, checklist complete)
+- Use `code-review` agent for **code quality evaluation** (bugs, security, patterns)
+- In supervisor pipeline, both are used: code-review for quality gate, then validate for AC
