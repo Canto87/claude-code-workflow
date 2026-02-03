@@ -47,6 +47,7 @@ INSTALL_AGENTS=false
 WITH_SUPERVISOR=false
 LIST_ONLY=false
 INTERACTIVE=false
+AUTO_YES=false
 
 print_info() {
     echo -e "${GREEN}[INFO]${NC} $1"
@@ -380,6 +381,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --interactive)
             INTERACTIVE=true
+            shift
+            ;;
+        --yes|-y)
+            AUTO_YES=true
             shift
             ;;
         --help)
