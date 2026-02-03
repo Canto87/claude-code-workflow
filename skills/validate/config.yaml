@@ -1,0 +1,81 @@
+# Validate Skill Configuration
+
+# Paths for artifact validation
+paths:
+  plans: "docs/plans"
+  checklists: "docs/checklists"
+  commands: ".claude/commands"
+
+# Mode 1: Artifact Validation Weights
+artifact_validation:
+  categories:
+    structure:
+      weight: 0.30
+      items:
+        - "AC-01: Phase count matches"
+        - "AC-02: Phase names match"
+        - "AC-03: Phase command files exist"
+
+    content:
+      weight: 0.30
+      items:
+        - "AC-04: Checklist-design correspondence"
+        - "AC-05: Command-design correspondence"
+        - "AC-06: Acceptance Criteria exist"
+        - "AC-07: Test Commands exist"
+
+    existence:
+      weight: 0.20
+      items:
+        - "AC-08: Referenced file paths valid"
+
+    documentation:
+      weight: 0.20
+      items:
+        - "AC-09: CLAUDE.md command registration"
+
+# Mode 2: Implementation Validation Weights
+implementation_validation:
+  categories:
+    build_test:
+      weight: 0.35
+      items:
+        - "IV-01: Build passes"
+        - "IV-02: Tests pass"
+        - "IV-03: Phase-specific tests pass"
+
+    acceptance:
+      weight: 0.30
+      items:
+        - "IV-04: Acceptance Criteria met"
+
+    checklist:
+      weight: 0.15
+      items:
+        - "IV-05: Checklist complete"
+        - "IV-06: Phase status complete"
+        - "IV-07: Session notes recorded"
+
+    quality:
+      weight: 0.20
+      items:
+        - "IV-08: Error handling pattern"
+        - "IV-09: Logging pattern"
+
+# Scoring rules
+scoring:
+  pass: 10
+  warning: 5
+  fail: 0
+
+# Grade thresholds
+grades:
+  excellent: 9
+  good: 7
+  needs_improvement: 5
+  fail: 4
+
+# Build/test commands (read from CLAUDE.md or init-impl config if not set)
+# build:
+#   command: "npm run build"
+#   test: "npm test"

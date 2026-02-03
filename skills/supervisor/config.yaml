@@ -1,0 +1,57 @@
+# Supervisor Skill Configuration
+# QA Pipeline Orchestrator
+
+# Gate thresholds
+gates:
+  review:
+    pass_threshold: 7       # Score >= 7 with no Critical → PASS
+    retry_threshold: 5      # Score 5-6 or has Critical → RETRY
+    max_retries: 2          # Max review retries before REJECT
+
+  validate:
+    pass_threshold: 7       # Score >= 7 with no Critical → PASS
+    retry_threshold: 5      # Score 5-6 or has Critical → RETRY
+    max_retries: 1          # Max validate retries before REJECT
+
+# Total retry limit across all gates
+total_max_retries: 3
+
+# Pipeline stages (in execution order)
+stages:
+  - name: "implement"
+    agent: "auto-impl"
+    skip_flag: "--skip-impl"
+    description: "Delegate implementation to auto-impl agent"
+
+  - name: "review"
+    agent: "code-review"
+    gate: "review"
+    description: "Code quality review with scoring"
+
+  - name: "validate"
+    agent: "validate"
+    gate: "validate"
+    description: "Implementation validation against AC"
+
+# Commit message templates
+commits:
+  feedback_fix: "fix({feature}): phase{phase} - {gate} feedback #{retry}"
+  implementation: "feat({feature}): phase{phase} - {task}"
+
+# Paths (can be overridden per project)
+paths:
+  commands: ".claude/commands"
+  checklists: "docs/checklists"
+  plans: "docs/plans"
+
+# Build verification (run after implementation)
+build:
+  enabled: true
+  # Command is read from project CLAUDE.md or init-impl config
+
+# Notification (optional, requires slack-notify skill)
+notifications:
+  enabled: false
+  on_success: true
+  on_failure: true
+  on_retry: false
